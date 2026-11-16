@@ -1,0 +1,28 @@
+@"
+# Local reference repositories
+awesome-design-md/
+ui-ux-pro-max-skill/
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+"@ | Set-Content -Path .gitignore -Encoding UTF8
