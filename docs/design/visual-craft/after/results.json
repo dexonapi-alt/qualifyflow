@@ -1,0 +1,304 @@
+[
+  {
+    "name": "interface-font",
+    "family": "\"Inter Variable\", Inter, \"Segoe UI\", Arial, sans-serif",
+    "loaded": true
+  },
+  {
+    "name": "semantic-token-contrast",
+    "pairs": [
+      {
+        "pair": "body",
+        "ratio": 14.2,
+        "minimum": 4.5
+      },
+      {
+        "pair": "secondary",
+        "ratio": 8.94,
+        "minimum": 4.5
+      },
+      {
+        "pair": "muted",
+        "ratio": 5.07,
+        "minimum": 4.5
+      },
+      {
+        "pair": "primary action",
+        "ratio": 5.18,
+        "minimum": 4.5
+      },
+      {
+        "pair": "focus",
+        "ratio": 5.18,
+        "minimum": 3
+      },
+      {
+        "pair": "input border",
+        "ratio": 3.15,
+        "minimum": 3
+      }
+    ]
+  },
+  {
+    "name": "login",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-error",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-error",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-error",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-error",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-no-results",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-no-results",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-no-results",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-no-results",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-search-filter-sort",
+    "passed": true
+  },
+  {
+    "name": "company-detail",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-detail",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-detail",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-detail",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "people",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "people",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "people",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "people",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "admin-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "admin-keyboard",
+    "focused": {
+      "tag": "BUTTON",
+      "visible": true
+    }
+  },
+  {
+    "name": "admin-200-percent-zoom",
+    "overflow": false
+  },
+  {
+    "name": "client-one",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-one",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-one",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-one",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "client-keyboard",
+    "focused": {
+      "tag": "A",
+      "visible": true
+    }
+  },
+  {
+    "name": "client-200-percent-zoom",
+    "overflow": false
+  },
+  {
+    "name": "client-empty",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "empty-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "empty-keyboard",
+    "focused": {
+      "tag": "A",
+      "visible": true
+    }
+  },
+  {
+    "name": "empty-200-percent-zoom",
+    "overflow": false
+  },
+  {
+    "name": "login-first-focus",
+    "nameAttribute": "email"
+  },
+  {
+    "name": "login-focus-order",
+    "order": [
+      "email",
+      "password",
+      "code",
+      "Sign in"
+    ]
+  },
+  {
+    "name": "login-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "login-viewport",
+    "fits": true
+  }
+]

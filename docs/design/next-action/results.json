@@ -1,0 +1,42 @@
+{
+  "results": [
+    {
+      "surface": "client",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "client",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "client",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "client",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "employee",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "surface": "employee",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    }
+  ],
+  "failures": [],
+  "errors": []
+}

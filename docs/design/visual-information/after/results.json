@@ -1,0 +1,817 @@
+[
+  {
+    "name": "interface-font",
+    "family": "\"Inter Variable\", Inter, \"Segoe UI\", Arial, sans-serif",
+    "loaded": true
+  },
+  {
+    "name": "semantic-token-contrast",
+    "pairs": [
+      {
+        "pair": "body",
+        "ratio": 17.05,
+        "minimum": 4.5
+      },
+      {
+        "pair": "secondary",
+        "ratio": 8.59,
+        "minimum": 4.5
+      },
+      {
+        "pair": "muted",
+        "ratio": 5.74,
+        "minimum": 4.5
+      },
+      {
+        "pair": "primary action",
+        "ratio": 5.18,
+        "minimum": 4.5
+      },
+      {
+        "pair": "focus",
+        "ratio": 5.18,
+        "minimum": 3
+      },
+      {
+        "pair": "input border",
+        "ratio": 3.15,
+        "minimum": 3
+      }
+    ]
+  },
+  {
+    "name": "login",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-pending",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-pending",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-pending",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-pending",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-error",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-error",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-error",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "login-error",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "admin-shell-composition",
+    "noAppBar": true,
+    "titleAboveBreadcrumb": true,
+    "noRepeatedSidebarLabels": true,
+    "noCompanyFrame": true
+  },
+  {
+    "name": "admin-sidebar-brand-and-readable-identity",
+    "passed": true
+  },
+  {
+    "name": "operations",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-no-results",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-no-results",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-no-results",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-no-results",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-search-filter-sort",
+    "passed": true
+  },
+  {
+    "name": "company-active",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-active",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-active",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-active",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-invitations",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-invitations",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-invitations",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-invitations",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-audit",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-audit",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-audit",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "operations-audit",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-summary",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-summary",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-summary",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-summary",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-detail",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-detail",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-detail",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "company-detail",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "people",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "people",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "people",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "people",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "admin-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "admin-keyboard",
+    "focused": {
+      "tag": "BUTTON",
+      "visible": true
+    }
+  },
+  {
+    "name": "admin-200-percent-zoom",
+    "overflow": false
+  },
+  {
+    "name": "account-menu-admin",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "account-menu-admin",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "account-menu-admin",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "account-menu-admin",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "admin-sidebar-keyboard-logout-session-revocation",
+    "passed": true
+  },
+  {
+    "name": "client-loading",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-loading",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-loading",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-loading",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-shell-composition",
+    "noAppBar": true,
+    "titleAboveBreadcrumb": true,
+    "noRepeatedSidebarLabels": true,
+    "noCompanyFrame": true
+  },
+  {
+    "name": "client-sidebar-brand-and-readable-identity",
+    "passed": true
+  },
+  {
+    "name": "client-one",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-one",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-one",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-one",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-visual-information-real-scope-and-action",
+    "passed": true
+  },
+  {
+    "name": "client-locations",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-locations",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-locations",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-locations",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-people",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-people",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-people",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-people",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-configuration",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-configuration",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-configuration",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-configuration",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-management-sections-scope-navigation",
+    "passed": true
+  },
+  {
+    "name": "client-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "client-keyboard",
+    "focused": {
+      "tag": "BUTTON",
+      "visible": true
+    }
+  },
+  {
+    "name": "client-200-percent-zoom",
+    "overflow": false
+  },
+  {
+    "name": "account-menu-client",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "account-menu-client",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "account-menu-client",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "account-menu-client",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-sidebar-keyboard-logout-session-revocation",
+    "passed": true
+  },
+  {
+    "name": "empty-shell-composition",
+    "noAppBar": true,
+    "titleAboveBreadcrumb": true,
+    "noRepeatedSidebarLabels": true,
+    "noCompanyFrame": true
+  },
+  {
+    "name": "empty-sidebar-brand-and-readable-identity",
+    "passed": true
+  },
+  {
+    "name": "client-empty",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "empty-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "empty-keyboard",
+    "focused": {
+      "tag": "A",
+      "visible": true
+    }
+  },
+  {
+    "name": "empty-200-percent-zoom",
+    "overflow": false
+  },
+  {
+    "name": "empty-sidebar-keyboard-logout-session-revocation",
+    "passed": true
+  },
+  {
+    "name": "long-shell-composition",
+    "noAppBar": true,
+    "titleAboveBreadcrumb": true,
+    "noRepeatedSidebarLabels": true,
+    "noCompanyFrame": true
+  },
+  {
+    "name": "long-sidebar-brand-and-readable-identity",
+    "passed": true
+  },
+  {
+    "name": "client-long-identity",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-long-identity",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-long-identity",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-long-identity",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "long-visual-information-real-scope-and-action",
+    "passed": true
+  },
+  {
+    "name": "viewer-locations",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "viewer-locations",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "viewer-locations",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "viewer-locations",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "viewer-configuration",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "viewer-configuration",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "viewer-configuration",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "viewer-configuration",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "long-management-sections-scope-navigation",
+    "passed": true
+  },
+  {
+    "name": "long-identity-disclosure-and-viewer-scope",
+    "passed": true
+  },
+  {
+    "name": "long-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "long-keyboard",
+    "focused": {
+      "tag": "BUTTON",
+      "visible": true
+    }
+  },
+  {
+    "name": "long-200-percent-zoom",
+    "overflow": false
+  },
+  {
+    "name": "long-sidebar-keyboard-logout-session-revocation",
+    "passed": true
+  },
+  {
+    "name": "no_locations-shell-composition",
+    "noAppBar": true,
+    "titleAboveBreadcrumb": true,
+    "noRepeatedSidebarLabels": true,
+    "noCompanyFrame": true
+  },
+  {
+    "name": "no_locations-sidebar-brand-and-readable-identity",
+    "passed": true
+  },
+  {
+    "name": "client-no-locations",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-no-locations",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-no-locations",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-no-locations",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty-locations",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty-locations",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty-locations",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "client-empty-locations",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "actual-empty-location-state",
+    "passed": true
+  },
+  {
+    "name": "no_locations-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "no_locations-keyboard",
+    "focused": {
+      "tag": "BUTTON",
+      "visible": true
+    }
+  },
+  {
+    "name": "no_locations-200-percent-zoom",
+    "overflow": false
+  },
+  {
+    "name": "no_locations-sidebar-keyboard-logout-session-revocation",
+    "passed": true
+  },
+  {
+    "name": "login-first-focus",
+    "nameAttribute": "email"
+  },
+  {
+    "name": "login-focus-order",
+    "order": [
+      "email",
+      "password",
+      "code",
+      "Sign in"
+    ]
+  },
+  {
+    "name": "login-reduced-motion",
+    "animations": 0
+  },
+  {
+    "name": "login-viewport",
+    "fits": true
+  }
+]

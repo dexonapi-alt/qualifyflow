@@ -1,0 +1,2 @@
+# System overview
+Browser → same-origin proxy → FastAPI → shared authorization/domain service → PostgreSQL (business state + audit + outbox transaction). Independent worker delivers local SMTP with durable failure/retry state; Redis/Celery transports work. S3-compatible private storage reserved for M2 quarantine/evidence. Provider adapters cannot determine eligibility. Authentication identifies users; membership/assignment grants capabilities. Production disabled pending release gates.

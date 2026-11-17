@@ -1,0 +1,307 @@
+/* M2 registry: dense working records with the approved identity/module language. */
+.drivers-workspace,
+.driver-record {
+  padding-top: 22px;
+}
+.drivers-workspace h2,
+.driver-record h2 {
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.driver-context {
+  font-size: 12px;
+  color: var(--qf-muted);
+  margin: 7px 0 0;
+}
+.drivers-workspace .section-actions > button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.driver-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+.driver-toolbar .search-field {
+  flex: 1;
+  max-width: 460px;
+}
+.driver-toolbar select {
+  width: auto;
+  min-height: 40px;
+}
+.driver-table {
+  min-width: 720px;
+}
+.driver-table button {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  white-space: nowrap;
+}
+.driver-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  font-size: 12px;
+  color: var(--qf-muted);
+}
+.driver-pagination > div {
+  display: flex;
+  gap: 8px;
+}
+.driver-create-panel {
+  padding: 22px;
+  border: 1px solid var(--qf-border);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  background: var(--qf-surface);
+}
+.driver-create-panel form {
+  border: 0;
+  padding: 0;
+  box-shadow: none;
+}
+.driver-create-panel h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.driver-create-panel .muted {
+  font-size: 12px;
+  margin: 12px 0 20px;
+}
+.operational-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--qf-muted);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 18px 0 0;
+}
+.operational-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.driver-back {
+  padding-left: 0;
+  margin: 0 0 18px;
+}
+.driver-record-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.driver-record-heading .identity-mark {
+  width: 42px;
+  height: 42px;
+  font-size: 13px;
+}
+.driver-record-heading p {
+  margin: 5px 0 0;
+  color: var(--qf-muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.driver-record-heading h2 {
+  overflow-wrap: anywhere;
+}
+.driver-record-tools {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.driver-state-context {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--qf-muted);
+}
+.driver-record-tools button {
+  font-size: 12px;
+}
+.driver-sections {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--qf-border);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+.driver-sections button {
+  flex-shrink: 0;
+  border-radius: 0;
+  font-size: 12px;
+  padding: 12px 10px;
+  border-bottom: 2px solid transparent;
+}
+.driver-sections button[aria-current="page"] {
+  border-bottom-color: var(--qf-blue);
+  color: var(--qf-ink);
+}
+.driver-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 20px;
+  align-items: start;
+}
+.driver-overview > section {
+  padding: 22px;
+  border: 1px solid var(--qf-border);
+  border-radius: 12px;
+  min-width: 0;
+}
+.driver-record h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 18px;
+}
+.driver-record .driver-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.driver-facts > div {
+  min-width: 0;
+}
+.driver-record .driver-facts dt {
+  border: 0;
+  padding: 0;
+  font-size: 11px;
+  color: var(--qf-muted);
+}
+.driver-record .driver-facts dd {
+  border: 0;
+  padding: 0;
+  margin: 5px 0 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.driver-identity-panel .muted,
+.driver-current-panel p {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.driver-current-panel {
+  background: var(--qf-blue-soft);
+}
+.driver-current-location {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 15px;
+}
+.driver-current-location svg {
+  color: var(--qf-link);
+}
+.driver-management {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.driver-management > section {
+  min-width: 0;
+}
+.driver-management .muted,
+.driver-correction .muted {
+  font-size: 12px;
+  line-height: 1.7;
+}
+.driver-correction {
+  max-width: 680px;
+}
+.engagement-history {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid var(--qf-border);
+}
+.engagement-history table {
+  min-width: 520px;
+}
+.driver-history {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.driver-history > li {
+  border-left: 2px solid var(--qf-border);
+  padding: 0 0 22px 20px;
+  margin-left: 8px;
+}
+.driver-history p {
+  font-size: 12px;
+  margin: 10px 0 6px;
+}
+.driver-history small {
+  color: var(--qf-muted);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.driver-history details {
+  font-size: 12px;
+  margin-top: 10px;
+}
+.driver-history pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  padding: 12px;
+  background: var(--qf-canvas-soft);
+}
+.driver-history code {
+  overflow-wrap: anywhere;
+}
+.state.onboarding,
+.state.engagement_draft {
+  background: var(--qf-blue-soft);
+  color: var(--qf-information);
+}
+.state.ended,
+.state.inactive {
+  background: var(--qf-table-head);
+  color: var(--qf-muted);
+}
+@media (max-width: 850px) {
+  .driver-overview,
+  .driver-management {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .driver-toolbar,
+  .driver-pagination {
+    flex-wrap: wrap;
+  }
+  .driver-toolbar .search-field {
+    flex-basis: 100%;
+  }
+  .driver-toolbar select {
+    width: 100%;
+  }
+  .driver-create-panel {
+    padding: 18px;
+  }
+  .driver-record-heading {
+    align-items: flex-start;
+  }
+  .driver-record-heading > .state {
+    flex-shrink: 0;
+  }
+  .driver-facts {
+    grid-template-columns: 1fr;
+  }
+  .driver-record button,
+  .drivers-workspace button {
+    min-height: 44px;
+  }
+}

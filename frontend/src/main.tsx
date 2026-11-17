@@ -1,0 +1,14 @@
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "@fontsource-variable/inter";
+import "./style.css";
+import "./premium.css";
+import "./visual-information.css";
+import "./overview-workspace.css";
+import "./product-polish.css";
+import "./drivers.css";
+import "./intake.css";
+import "./work-queues.css";
+import "./qualification-file.css";
+import "./managed-product.css";
+createRoot(document.getElementById("root")!).render(<App />);

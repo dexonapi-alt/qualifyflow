@@ -1,0 +1,321 @@
+/* Three task-driven Overview modules. Ordinary values remain unboxed. */
+.overview-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(340px, 5fr);
+  gap: 20px;
+  align-items: start;
+  padding-top: 24px;
+  animation: information-enter var(--qf-motion-ui) var(--qf-ease);
+}
+.overview-module {
+  min-width: 0;
+  border: 1px solid var(--qf-border);
+  border-radius: 12px;
+  background: var(--qf-surface);
+}
+.company-profile {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+.profile-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--qf-border);
+}
+.profile-identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.profile-identity > div {
+  flex: 1;
+  min-width: 120px;
+}
+.profile-identity h2 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  margin: 0 0 5px;
+  overflow-wrap: anywhere;
+}
+.profile-identity p {
+  color: var(--qf-muted);
+  font-size: 11px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.profile-config.quiet {
+  margin: 16px 0 0 54px;
+  padding: 0;
+  min-height: 28px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--qf-link);
+  font-size: 12px;
+}
+.profile-body {
+  padding: 0 24px 24px;
+}
+.profile-group {
+  padding-top: 22px;
+}
+.profile-group + .profile-group {
+  margin-top: 22px;
+  border-top: 1px solid var(--qf-border);
+}
+.profile-group h3 {
+  margin: 0 0 17px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.profile-group h3 svg {
+  color: var(--qf-muted);
+}
+.overview-workspace .profile-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  margin: 0;
+}
+.profile-facts > div {
+  min-width: 0;
+}
+.profile-facts .wide-fact {
+  grid-column: 1 / -1;
+}
+.overview-workspace .profile-facts dt {
+  font-size: 11px;
+  color: var(--qf-muted);
+  padding: 0;
+  margin: 0 0 6px;
+  border: 0;
+}
+.overview-workspace .profile-facts dd {
+  font-size: 13px;
+  color: var(--qf-ink);
+  line-height: 1.55;
+  padding: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  border: 0;
+}
+.service-mode-value {
+  text-transform: capitalize;
+}
+.profile-contact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.profile-contact > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.readiness-module {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 20px;
+}
+.overview-module > h2,
+.module-heading h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.readiness-module .readiness-signal {
+  margin: 16px 0 18px;
+  padding: 16px;
+}
+.readiness-module .readiness-signal h3 {
+  font-size: 14px;
+}
+.access-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0 18px;
+  color: var(--qf-information);
+}
+.access-strip p {
+  font-size: 11px;
+  color: var(--qf-muted);
+  margin: 5px 0 0;
+}
+.readiness-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--qf-border);
+}
+.readiness-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  font-size: 12px;
+}
+.readiness-actions p {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.65;
+  color: var(--qf-muted);
+}
+.locations-module {
+  grid-column: 2;
+  grid-row: 2;
+  padding: 20px;
+}
+.module-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.module-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.location-scope-count {
+  color: var(--qf-muted);
+  font-size: 11px;
+}
+.locations-module .location-empty.compact-empty {
+  padding: 16px 0;
+  background: transparent;
+  margin: 0;
+  gap: 8px;
+}
+.locations-module .location-empty > svg {
+  width: 88px;
+  height: 64px;
+}
+.locations-module .location-empty h3 {
+  font-size: 12px;
+}
+.locations-module .location-empty p {
+  font-size: 11px;
+}
+.locations-module .location-summary.secondary {
+  width: auto;
+  margin: 16px 0 0;
+  min-height: 36px;
+  gap: 10px;
+  padding: 8px 12px;
+  background: white;
+  border-color: var(--qf-border-strong);
+  font-size: 12px;
+}
+.locations-module .location-summary.secondary:hover {
+  background: var(--qf-canvas-soft);
+}
+.location-preview {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+.location-preview li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--qf-border);
+}
+.location-preview li > svg {
+  color: var(--qf-information);
+  flex-shrink: 0;
+}
+.location-preview li > div {
+  flex: 1;
+  min-width: 0;
+}
+.location-preview strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.location-preview small {
+  display: block;
+  font-size: 10px;
+  margin-top: 4px;
+  color: var(--qf-muted);
+  overflow-wrap: anywhere;
+}
+.readiness-module .overview-blockers {
+  margin: 0 0 18px;
+}
+@media (max-width: 1100px) {
+  .overview-workspace {
+    grid-template-columns: minmax(0, 6fr) minmax(300px, 5fr);
+    gap: 16px;
+  }
+  .profile-header {
+    padding: 20px;
+  }
+  .profile-body {
+    padding: 0 20px 20px;
+  }
+}
+@media (max-width: 850px) {
+  .overview-workspace {
+    grid-template-columns: 1fr;
+  }
+  .company-profile,
+  .readiness-module,
+  .locations-module {
+    grid-column: auto;
+    grid-row: auto;
+  }
+}
+@media (max-width: 640px) {
+  .overview-workspace {
+    padding-top: 20px;
+  }
+  .profile-header {
+    padding: 18px;
+  }
+  .profile-body {
+    padding: 0 18px 20px;
+  }
+  .profile-identity h2 {
+    font-size: 16px;
+  }
+  .profile-identity > div {
+    min-width: 150px;
+  }
+  .profile-config.quiet {
+    margin-left: 0;
+    min-height: 44px;
+    margin-top: 8px;
+  }
+  .readiness-module,
+  .locations-module {
+    padding: 18px;
+  }
+  .readiness-actions button,
+  .locations-module .location-summary.secondary {
+    min-height: 44px;
+  }
+  .locations-module .location-empty.compact-empty {
+    flex-direction: row;
+    align-items: center;
+  }
+  .locations-module .location-empty > svg {
+    width: 70px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .overview-workspace {
+    animation: none;
+  }
+}

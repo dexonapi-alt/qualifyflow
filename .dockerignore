@@ -1,0 +1,10 @@
+.git
+.env*
+.local
+.venv
+**/.venv
+**/node_modules
+**/dist
+**/__pycache__
+awesome-design-md
+ui-ux-pro-max-skill

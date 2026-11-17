@@ -1,0 +1,222 @@
+{
+  "results": [
+    {
+      "name": "client-overview",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-overview",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-overview",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-overview",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "drivers",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "drivers",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "drivers",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "drivers",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-requests",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-requests",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-requests",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-requests",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-decisions",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-decisions",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-decisions",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "client-decisions",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "company-settings",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "company-settings",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "company-settings",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "company-settings",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "specialist-overview",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "specialist-overview",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "specialist-overview",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "specialist-overview",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "review-queue",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "review-queue",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "review-queue",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "review-queue",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "cases",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "cases",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "cases",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "cases",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "screening-inbox",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "screening-inbox",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "screening-inbox",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "screening-inbox",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    }
+  ],
+  "failures": [],
+  "errors": []
+}

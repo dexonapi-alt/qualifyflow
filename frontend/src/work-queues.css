@@ -1,0 +1,149 @@
+.work-queue {
+  padding-block: 24px;
+}
+.case-identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0;
+}
+.case-identity h4 {
+  margin: 0;
+  font-size: 19px;
+}
+.case-context {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 32px;
+  margin: 24px 0;
+  padding-block: 20px;
+  border-top: 1px solid #e3e7ee;
+}
+.case-context section {
+  min-width: 0;
+}
+.case-context dl {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  font-size: 13px;
+}
+.case-context dt {
+  color: #61708a;
+}
+.case-context dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.case-context p {
+  line-height: 1.6;
+}
+.work-queue select {
+  display: block;
+  margin: 8px 0 16px;
+  max-width: 100%;
+}
+.queue-filter {
+  display: block;
+  max-width: 260px;
+  margin-bottom: 20px;
+}
+.queue-owner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+.case-timeline {
+  border-top: 1px solid #e3e7ee;
+  padding-top: 20px;
+}
+.case-timeline ol {
+  list-style: none;
+  padding: 0 0 0 20px;
+  border-left: 2px solid #e0e6f1;
+}
+.case-timeline li {
+  padding: 0 0 24px 14px;
+}
+.case-timeline li strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.case-timeline li p {
+  margin: 8px 0;
+  overflow-wrap: anywhere;
+}
+.case-timeline small {
+  color: #61708a;
+}
+.case-approval {
+  max-width: 720px;
+  margin-block: 24px;
+}
+.approval-list {
+  display: grid;
+  gap: 20px;
+}
+.approval-item {
+  border: 1px solid #e0e5ef;
+  border-radius: 10px;
+  padding: 22px;
+  max-width: 900px;
+}
+.approval-item h4 {
+  margin: 0;
+}
+.approval-item form {
+  margin-top: 20px;
+}
+.decision-record {
+  margin-top: 16px;
+  border-left: 3px solid #b6c9df;
+  padding-left: 16px;
+}
+.work-queue .management-table td {
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+  max-width: 320px;
+}
+@media (max-width: 700px) {
+  .case-context {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .case-context dl {
+    grid-template-columns: 110px 1fr;
+  }
+  .work-queue button {
+    min-height: 44px;
+  }
+  .approval-item {
+    padding: 16px;
+  }
+}
+.sidebar-company-context {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 22px !important;
+}
+@media (max-width: 640px) {
+  .sidebar nav[aria-label="Main navigation"] {
+    grid-column: 1/-1;
+    display: flex;
+    gap: 4px;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 4px;
+  }
+  .sidebar nav[aria-label="Main navigation"] .nav {
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+  .sidebar nav[aria-label="Main navigation"] .sidebar-section-label {
+    display: none;
+  }
+}

@@ -1,0 +1,174 @@
+[
+  {
+    "name": "empty",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "empty",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "empty",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "empty",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "registration",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "registration",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "registration",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "registration",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "record",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "record",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "record",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "record",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "management",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "management",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "management",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "management",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "history",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "history",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "history",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "history",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "roster",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "roster",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "roster",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "roster",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "no-results",
+    "width": 375,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "no-results",
+    "width": 768,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "no-results",
+    "width": 1024,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "no-results",
+    "width": 1440,
+    "violations": [],
+    "overflow": false
+  },
+  {
+    "name": "reduced-motion",
+    "animations": 0
+  }
+]
