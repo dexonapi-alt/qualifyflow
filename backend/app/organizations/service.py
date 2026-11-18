@@ -4,7 +4,17 @@ import json
 import pyotp
 from sqlalchemy import select, func
 
-from app.models import Tenant, Branch, User, Membership, OperatorAssignment, Invitation, Outbox, now
+from app.models import (
+    Tenant,
+    Branch,
+    User,
+    Membership,
+    OperatorAssignment,
+    Invitation,
+    Outbox,
+    ProviderConnection,
+    now,
+)
 from app.audit.service import record
 from app.shared.authorization import authorize, provisioning, allow_write
 from app.shared.errors import DomainError, conflict
@@ -86,7 +96,28 @@ def readiness(db, tenant):
     if not tenant.configuration.get("policy_reference"):
         missing.append("Record the approved responsibility and communication policy reference.")
     if tenant.configuration.get("integration_required"):
-        missing.append("Required integration is not verified; integration workflow is pending M5.")
+        verified = db.scalar(
+            select(ProviderConnection.id)
+            .join(User, User.id == ProviderConnection.owner_id)
+            .join(
+                Membership,
+                (Membership.user_id == User.id) & (Membership.tenant_id == ProviderConnection.tenant_id),
+            )
+            .where(
+                ProviderConnection.tenant_id == tenant.id,
+                ProviderConnection.state == "sandbox_verified",
+                ProviderConnection.verified_credential_version == ProviderConnection.credential_version,
+                User.status == "active",
+                Membership.status == "active",
+                Membership.role == "client_admin",
+                Membership.branch_id.is_(None),
+            )
+            .limit(1)
+        )
+        if not verified:
+            missing.append(
+                "Required sandbox connection must pass a current authenticated test under active employer authorization."
+            )
     admins = db.scalar(
         select(func.count())
         .select_from(Membership)
@@ -222,6 +253,8 @@ def invitation_action(db, actor, tid, iid, action, data, cid):
     )
     if not item:
         raise DomainError("NOT_FOUND", "Resource unavailable.", 404)
+    if item.role == "driver":
+        raise DomainError("FORBIDDEN", "Manage this invitation from the driver profile.", 403)
     if item.version != data.version:
         conflict()
     if item.status in {"accepted", "revoked"}:
@@ -254,6 +287,9 @@ def accept(db, data, current_actor, cid):
         raise DomainError("INVITATION_UNAVAILABLE", "Invitation expired, revoked, used or unavailable.", 400)
     allow_write(tenant)
     branch_check(db, item.tenant_id, item.branch_id)
+    if item.role == "driver":
+        from app.driver_portal.service import accept_driver
+        return accept_driver(db, item, data, current_actor, cid)
     actor = db.scalar(select(User).where(User.email == item.email).with_for_update())
     if actor:
         if not current_actor or actor.id != current_actor.id or actor.status != "active":

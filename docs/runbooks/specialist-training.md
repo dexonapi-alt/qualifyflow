@@ -104,7 +104,7 @@ If the client provides only a document, open the exact driver/engagement directl
 6. The intended client replies through its account. Review the response, retain the history and process any new evidence through upload/scan/review. A reply is not evidence acceptance.
 7. For the supported administrative resolution flow, propose a specific resolution with rationale and approval expiry. The employer decides. Resolve/close only with the current exact approved case version and permitted controls. New notes/evidence/responses can invalidate old approvals.
 
-Important current gap: cases require an intake source. A missing requirement by itself cannot yet open a direct document-request case. Do not look for a nonexistent button or fabricate a receipt. Follow the client's approved manual follow-up process in an authorized system until that workflow is implemented, preserving a proper record of what was done.
+Requirement-only follow-up is now available: open the actual Qualification file, expand **Follow up on this requirement**, record the reason and open the resulting case. It preserves the real requirement/engagement origin without inventing intake. Claim the case before drafting a client request. Approved recipient policy, employer communication approval and evidence-review gates still apply.
 
 ## 6. A normal specialist day
 
@@ -146,4 +146,7 @@ For an improvement ticket: include the workflow, expected vs observed behavior, 
 
 Received ≠ validated. Uploaded ≠ scanned. Scanned ≠ reviewed. Reviewed evidence ≠ employer decision. Portal publication ≠ read or answered. Resolved case ≠ legally eligible driver. Each state must correspond to the action actually performed and its retained evidence.
 
-Start with Sections2–4 for one synthetic driver/report. Then practice an unmatched row and an approved information request. Broad production readiness, legal applicability, complete adverse-action handling, external delivery, provider/API setup and exhaustive recovery/security verification remain outside this implemented training slice.
+Start with Sections2–4 for one synthetic driver/report. Then practice an unmatched row and an approved information request. Broad production readiness, legal applicability, complete adverse-action handling, external delivery, commercial-provider/client API setup and exhaustive recovery/security verification remain outside this implemented training slice.
+
+
+Local provider connections and scoped configured-evidence reports are now available within their current permissions; see [provider sandbox runbook](provider-sandbox.md). This does not grant an ordinary specialist configuration or export authority. The owner's first hands-on training exercise remains pending.

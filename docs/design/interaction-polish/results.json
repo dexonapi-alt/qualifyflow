@@ -1,0 +1,41 @@
+{
+  "scans": [
+    {
+      "name": "hover",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "reduced-motion",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "width-768",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "width-1024",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "overview",
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "touch",
+      "violations": [],
+      "overflow": false
+    }
+  ],
+  "errors": [],
+  "stableLayout": true,
+  "keyboardNoBlur": true,
+  "expandedContentNoBlur": true,
+  "reducedMotion": true,
+  "touchNoZoom": true,
+  "realFileNavigation": true
+}

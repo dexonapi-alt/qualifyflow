@@ -1,0 +1,81 @@
+{
+  "results": [
+    {
+      "name": "profile",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "profile",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "profile",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "profile",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "empty-long-name",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "empty-long-name",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "empty-long-name",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "empty-long-name",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "single-requirement",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "single-requirement",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "single-requirement",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "single-requirement",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "keyboard": true,
+  "reducedMotion": true,
+  "requirementFocus": true,
+  "errorRecovery": true
+}

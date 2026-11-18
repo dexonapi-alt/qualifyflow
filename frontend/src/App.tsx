@@ -21,6 +21,9 @@ import { RequirementCatalog } from "./QualificationFile";
 import { Correspondence } from "./Correspondence";
 import { FileReviewQueue } from "./FileReviewQueue";
 import { ManagedOverview } from "./ManagedOverview";
+import { Connections } from "./Connections";
+import { Reports } from "./Reports";
+import { DriverPortal } from "./DriverPortal";
 import { ProductHeader, ProductSidebar } from "./ProductChrome";
 
 type WorkspaceNavigation = {
@@ -74,6 +77,7 @@ function WorkspaceBreadcrumb({
 }
 
 export default function App() {
+  const [personal, setPersonal] = useState(false);
   const [directory, setDirectory] = useState(false),
     [mobileMenu, setMobileMenu] = useState(false);
   const [newDriverIntent, setNewDriverIntent] = useState(
@@ -82,6 +86,7 @@ export default function App() {
   const [focus, setFocus] = useState(() => ({
     driver: new URLSearchParams(location.hash.slice(1)).get("driver") || "",
     source: new URLSearchParams(location.hash.slice(1)).get("source") || "",
+    caseId: new URLSearchParams(location.hash.slice(1)).get("case") || "",
   }));
   const [workspaceNavigation, setWorkspaceNavigation] =
     useState<WorkspaceNavigation | null>(null);
@@ -123,7 +128,8 @@ export default function App() {
       .finally(() => setLoading(false));
   }, []);
   useEffect(() => {
-    if (user) refresh().catch((e) => setError(e.message));
+    if (user && (!user.driver_portal || user.company_access))
+      refresh().catch((e) => setError(e.message));
     else if (!loading) {
       setCompanies([]);
       setSelected("");
@@ -162,6 +168,7 @@ export default function App() {
       setFocus({
         driver: route.get("driver") || "",
         source: route.get("source") || "",
+        caseId: route.get("case") || "",
       });
       const view = route.get("view") || "summary";
       setSection(
@@ -175,6 +182,8 @@ export default function App() {
           "requirements",
           "correspondence",
           "files",
+          "integrations",
+          "reports",
           "branches",
           "people",
           "overview",
@@ -212,7 +221,7 @@ export default function App() {
           ...(addDriver ? { new: "driver" } : {}),
         }).toString(),
     );
-    setFocus({ driver, source });
+    setFocus({ driver, source, caseId: "" });
     setDirectory(false);
     setMobileMenu(false);
     setNewDriverIntent(addDriver);
@@ -224,7 +233,7 @@ export default function App() {
     history.pushState(null, "", location.pathname + location.search);
     setSelected("");
     setSection("summary");
-    setFocus({ driver: "", source: "" });
+    setFocus({ driver: "", source: "", caseId: "" });
     setCreating(false);
     setDirectory(true);
     setMobileMenu(false);
@@ -289,6 +298,15 @@ export default function App() {
         </p>
       </AuthFrame>
     );
+  if (user.driver_portal && (!user.company_access || personal))
+    return (
+      <DriverPortal
+        key={user.id}
+        user={user}
+        onLogout={logout}
+        onWorkspace={user.company_access ? () => setPersonal(false) : undefined}
+      />
+    );
   const ops = !!user.platform_role;
   const currentWorkspaceId =
     selected ||
@@ -305,6 +323,14 @@ export default function App() {
       <a className="skip" href="#content">
         Skip to content
       </a>
+      {user.driver_portal && (
+        <button
+          className="personal-workspace-switch"
+          onClick={() => setPersonal(true)}
+        >
+          My onboarding
+        </button>
+      )}
       <ProductSidebar
         user={user}
         context={navigation}
@@ -342,11 +368,13 @@ export default function App() {
                 (selected ? section : "home") +
                 focus.driver +
                 focus.source +
+                focus.caseId +
                 newDriverIntent
               }
               initialTab={selected ? section : "home"}
               initialDriverId={focus.driver}
               sourceItemId={focus.source}
+              initialCaseId={focus.caseId}
               initialCreate={newDriverIntent}
               onAddDriver={() =>
                 open(currentWorkspaceId, "drivers", "", "", true)
@@ -628,32 +656,141 @@ function CompanyCreate({
   );
 }
 
-function AcceptInvite({ token, user }: { token: string; user: User | null }) {
+function AcceptInvite({
+  token,
+  user: initialUser,
+}: {
+  token: string;
+  user: User | null;
+}) {
+  const [signedInUser, setSignedInUser] = useState<User | null>(null);
+  const [existingLogin, setExistingLogin] = useState(false);
+  const user = signedInUser || initialUser;
   const [setup, setSetup] = useState<{ secret: string; uri: string } | null>(
       null,
     ),
     [done, setDone] = useState(false),
     [setupError, setSetupError] = useState("");
+  const [info, setInfo] = useState<{
+    role: string;
+    email: string;
+    company: string;
+  } | null>(null);
+  const [inspectError, setInspectError] = useState("");
+  useEffect(() => {
+    let active = true;
+    api<{ role: string; email: string; company: string }>(
+      "/invitations/inspect",
+      { token },
+    )
+      .then((r) => {
+        if (active) setInfo(r);
+      })
+      .catch((e) => {
+        if (active) setInspectError(e.message);
+      });
+    return () => {
+      active = false;
+    };
+  }, [token]);
   return (
     <main className="auth">
       <Brand />
       <p className="eyebrow">Workspace invitation</p>
-      <h1>Accept your invitation</h1>
+      <h1>
+        {info?.role === "driver"
+          ? "Your onboarding starts here"
+          : "Accept your invitation"}
+      </h1>
+      {info && (
+        <p className="intro">
+          {info.company} invited {info.email}
+          {info.role === "driver"
+            ? " to a private driver workspace."
+            : " to a company workspace."}
+        </p>
+      )}
+      {inspectError && (
+        <p role="alert" className="error">
+          {inspectError}
+        </p>
+      )}
       {done ? (
         <>
           <p role="status">
-            Invitation accepted. Your scoped membership is active.
+            {info?.role === "driver"
+              ? "Your personal onboarding access is ready."
+              : "Invitation accepted. Your scoped membership is active."}
           </p>
           <a href="/">Continue to sign in</a>
+        </>
+      ) : info &&
+        user &&
+        user.email.toLowerCase() !== info.email.toLowerCase() ? (
+        <>
+          <p className="intro">
+            This invitation is for {info.email}. You are signed in as{" "}
+            {user.email}.
+          </p>
+          <Form
+            label="Sign out and continue"
+            onSave={async () => {
+              await api("/auth/logout", {});
+              location.reload();
+            }}
+          >
+            <p>
+              Continue with the invited account to keep these workspaces
+              separate.
+            </p>
+          </Form>
+        </>
+      ) : existingLogin && !user ? (
+        <>
+          <p className="intro">
+            Sign in to your existing account, then accept this invitation.
+          </p>
+          <Form
+            label="Sign in to accept"
+            onSave={async (d) => {
+              const r = await api<{ user: User }>("/auth/login", d);
+              setSignedInUser(r.user);
+              setExistingLogin(false);
+            }}
+          >
+            <Field
+              name="email"
+              label="Email address"
+              type="email"
+              defaultValue={info?.email}
+              autoComplete="username"
+            />
+            <Field name="password" label="Password" type="password" />
+            <Field
+              name="code"
+              label="Authenticator code"
+              required={false}
+              inputMode="numeric"
+              maxLength={6}
+              pattern="[0-9]{6}"
+              autoComplete="one-time-code"
+              help="Required when your existing account uses an authenticator."
+            />
+          </Form>
+          <button className="quiet" onClick={() => setExistingLogin(false)}>
+            Back to invitation
+          </button>
         </>
       ) : (
         <>
           <p className="intro">
             {user
               ? `Accept as ${user.email}.`
-              : "Set a password. Administrator invitations also require an authenticator."}
+              : info?.role === "driver"
+                ? "Set a password to view your requests and submit documents privately."
+                : "Set a password. Administrator invitations also require an authenticator."}
           </p>
-          {!user && (
+          {!user && info?.role === "client_admin" && (
             <button
               className="secondary"
               onClick={async () => {
@@ -726,6 +863,11 @@ function AcceptInvite({ token, user }: { token: string; user: User | null }) {
               </>
             )}
           </Form>
+          {!user && (
+            <button className="quiet" onClick={() => setExistingLogin(true)}>
+              Already have an account? Sign in to accept
+            </button>
+          )}
         </>
       )}
       <p className="muted">
@@ -745,6 +887,7 @@ function CompanyWorkspace({
   onContext,
   initialDriverId,
   sourceItemId,
+  initialCaseId,
   onOpenDriver,
   onNavigate,
   initialCreate,
@@ -758,6 +901,7 @@ function CompanyWorkspace({
   onContext?: (context: WorkspaceNavigation) => void;
   initialDriverId?: string;
   sourceItemId?: string;
+  initialCaseId?: string;
   onOpenDriver?: (driver: string, source: string) => void;
   onNavigate?: (view: string) => void;
   initialCreate?: boolean;
@@ -928,16 +1072,26 @@ function CompanyWorkspace({
     requirements: "Requirements",
     correspondence: "Client correspondence",
     files: "File review",
+    integrations: "Connections",
+    reports: "Reports",
   };
   const operational = tab in moduleTitle;
   const moduleAllowed =
-    tab === "home"
-      ? true
-      : tab === "drivers"
-        ? !!detail.driver_access
-        : tab === "requirements"
-          ? !!detail.driver_access?.can_correct
-          : !!detail.driver_access?.can_write;
+    tab === "integrations"
+      ? !detail.scope.branch_id &&
+        [
+          "client_admin",
+          "reviewer",
+          "specialist",
+          "integration_admin",
+        ].includes(detail.scope.role)
+      : tab === "home"
+        ? true
+        : tab === "drivers"
+          ? !!detail.driver_access
+          : tab === "requirements" || tab === "reports"
+            ? !!detail.driver_access?.can_correct
+            : !!detail.driver_access?.can_write;
   const shownBranches = detail.branches.filter((branch) =>
     (branch.name + " " + branch.reference)
       .toLowerCase()
@@ -1085,6 +1239,7 @@ function CompanyWorkspace({
           key={id}
           companyId={id}
           companyName={detail.display_name}
+          configuration={detail.configuration}
           access={detail.driver_access}
           branches={detail.branches}
           initialDriverId={initialDriverId}
@@ -1110,6 +1265,7 @@ function CompanyWorkspace({
             companyId={id}
             mode={tab}
             onOpenDriver={onOpenDriver}
+            initialCaseId={initialCaseId}
           />
         )}
       {tab === "requirements" && detail.driver_access?.can_correct && (
@@ -1120,6 +1276,15 @@ function CompanyWorkspace({
       )}
       {tab === "files" && detail.driver_access?.can_write && (
         <FileReviewQueue companyId={id} onOpenDriver={onOpenDriver} />
+      )}
+      {tab === "integrations" && moduleAllowed && (
+        <Connections companyId={id} />
+      )}
+      {tab === "reports" && moduleAllowed && (
+        <Reports
+          companyId={id}
+          onOpenDriver={(driver) => onOpenDriver?.(driver, "")}
+        />
       )}
       {sectionLoading && (
         <p role="status" className="inline-loading">

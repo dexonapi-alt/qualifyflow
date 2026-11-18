@@ -1,3 +1,13 @@
+Latest scoped addition: ADR-0026 / docs/design/DRIVER_WORKSPACE.md implements the owner-authorized personal driver journey, using explicit grants and shared document requests. See current context for executed evidence; this does not close the other milestone/release gates.
+
+## Current: connected milestone continuation ? 2026-11-19
+
+See [milestone continuation](MILESTONE_CONTINUATION.md) for the current delivered/remaining matrix and exact verification. Older chronological milestone labels below are historical. Owner resumed engineering; specialist training remains postponed and must be recalled for hands-on acceptance.
+
+Delivered real requirement-origin follow-up without fabricated intake, actual loopback provider configure/test/pull/webhook/rotate/pause/revoke, encrypted provenance/dedupe, durable pull recovery and explicit approved schedules/dry run. Added scoped configured-evidence Reports and audited private encrypted CSV export jobs with expiry/current-grant rechecks. Preserve ADR0017 visual foundation. ADR0018/0019/0020 document scope and boundaries. All original specifications unchanged.
+
+Verification: full backend70 passed; subsequently audit module2 passed (including new provisioning isolation), provider7 passed after schedule refinements, frontend9 passed, full current-shell onboarding/driver browser journey1 passed. Targeted connected browser journey and12 responsive axe/overflow cases passed. Final build/icon fix and refreshed screenshot inspection recorded in CURRENT_CONTEXT. No full-milestone or production-ready claim. Open M3 correction/matching/replay, M4 broader delivery, M5 client APIs/general automation, M6 commercial hardening and external release gates remain tracked.
+
 ## Current: cohesive managed-product workspace — 2026-11-17
 
 Owner approved the major visual improvement and requested a focused final density/contrast correction. Implemented: compact real totals; one wide three-driver preview; two balanced attention/service sections; functional View all actions; collapsed team/recent activity; consistent16px spacing; #111111 primary ink/white canvas with gray for supporting text. ADR-0017 supersedes earlier shell freezes. Latest owner instruction resumed verification, overriding the older testing pause. No new milestone started in the final correction.

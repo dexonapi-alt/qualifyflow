@@ -135,6 +135,87 @@ def parse(db, scope, data):
         raise DomainError("INVALID_CSV", "CSV could not be parsed. Check quoting and column structure.", 422)
 
 
+def receive_metadata(db, actor, tenant_id, data, correlation_id, source_channel="csv_metadata"):
+    tid = str(tenant_id)
+    branch = str(data.branch_id) if data.branch_id else None
+    scope = scope_for(db, actor, tid, branch, True)
+    allow_write(lock_tenant(db, actor, tid, "drivers:write"))
+    scope = scope_for(db, actor, tid, branch, True)
+    digest = hashlib.sha256(json.dumps([data.source, branch]).encode()).hexdigest()
+    prior = db.scalar(
+        select(IntakeBatch).where(
+            IntakeBatch.tenant_id == tid,
+            IntakeBatch.actor_id == actor.id,
+            IntakeBatch.command_id == str(data.command_id),
+        )
+    )
+    if prior:
+        if prior.source_hash != digest:
+            raise DomainError(
+                "IDEMPOTENCY_CONFLICT", "This receipt command was already used with different input.", 409
+            )
+        return {"id": prior.id, "replayed": True}
+    if branch:
+        branch_check(db, tid, branch)
+    rows = parse(db, scope, data)
+    batch = IntakeBatch(
+        tenant_id=tid,
+        branch_id=branch,
+        actor_id=actor.id,
+        command_id=str(data.command_id),
+        source_hash=digest,
+        encrypted_source=encrypt(data.source),
+        source_channel=source_channel,
+    )
+    db.add(batch)
+    db.flush()
+    db.add(
+        IntakeJob(
+            tenant_id=tid,
+            batch_id=batch.id,
+            actor_id=actor.id,
+            correlation_id=correlation_id,
+        )
+    )
+    for row in rows:
+        # No candidate IDs or automatic links are persisted. Review must revalidate later.
+        row["candidate"] = None
+        if row["status"] not in {"validation_failed", "duplicate_detected"}:
+            prior_item = db.scalar(
+                select(IntakeItem)
+                .join(IntakeBatch, IntakeBatch.id == IntakeItem.batch_id)
+                .where(
+                    IntakeItem.tenant_id == tid,
+                    IntakeItem.source_key == row["source_key"],
+                    IntakeBatch.branch_id == branch,
+                )
+            )
+            if prior_item:
+                row["status"] = "duplicate_detected"
+                row["reason"] = "A receipt for this source report/type already exists in this intake scope."
+        db.add(
+            IntakeItem(
+                tenant_id=tid,
+                batch_id=batch.id,
+                row_number=row["row_number"],
+                encrypted_payload=encrypt(json.dumps(row)),
+                source_key=row["source_key"],
+                status=row["status"],
+            )
+        )
+    record(
+        db,
+        actor,
+        tid,
+        "intake.received",
+        batch.id,
+        correlation_id,
+        row_count=len(rows),
+        source_channel=source_channel,
+    )
+    return {"id": batch.id, "replayed": False}
+
+
 def register(app, DB, Actor):
     base = "/api/v1/tenants/{tenant_id}/intake-batches"
 
@@ -151,85 +232,7 @@ def register(app, DB, Actor):
 
     @app.post(base, status_code=201)
     def receive(tenant_id: UUID, data: Receipt, actor: Actor, db: DB, request: Request):
-        tid = str(tenant_id)
-        branch = str(data.branch_id) if data.branch_id else None
-        scope = scope_for(db, actor, tid, branch, True)
-        allow_write(lock_tenant(db, actor, tid, "drivers:write"))
-        scope = scope_for(db, actor, tid, branch, True)
-        digest = hashlib.sha256(json.dumps([data.source, branch]).encode()).hexdigest()
-        prior = db.scalar(
-            select(IntakeBatch).where(
-                IntakeBatch.tenant_id == tid,
-                IntakeBatch.actor_id == actor.id,
-                IntakeBatch.command_id == str(data.command_id),
-            )
-        )
-        if prior:
-            if prior.source_hash != digest:
-                raise DomainError(
-                    "IDEMPOTENCY_CONFLICT", "This receipt command was already used with different input.", 409
-                )
-            return {"id": prior.id, "replayed": True}
-        if branch:
-            branch_check(db, tid, branch)
-        rows = parse(db, scope, data)
-        batch = IntakeBatch(
-            tenant_id=tid,
-            branch_id=branch,
-            actor_id=actor.id,
-            command_id=str(data.command_id),
-            source_hash=digest,
-            encrypted_source=encrypt(data.source),
-        )
-        db.add(batch)
-        db.flush()
-        db.add(
-            IntakeJob(
-                tenant_id=tid,
-                batch_id=batch.id,
-                actor_id=actor.id,
-                correlation_id=request.state.correlation_id,
-            )
-        )
-        for row in rows:
-            # No candidate IDs or automatic links are persisted. Review must revalidate later.
-            row["candidate"] = None
-            if row["status"] not in {"validation_failed", "duplicate_detected"}:
-                prior_item = db.scalar(
-                    select(IntakeItem)
-                    .join(IntakeBatch, IntakeBatch.id == IntakeItem.batch_id)
-                    .where(
-                        IntakeItem.tenant_id == tid,
-                        IntakeItem.source_key == row["source_key"],
-                        IntakeBatch.branch_id == branch,
-                    )
-                )
-                if prior_item:
-                    row["status"] = "duplicate_detected"
-                    row["reason"] = (
-                        "A receipt for this source report/type already exists in this intake scope."
-                    )
-            db.add(
-                IntakeItem(
-                    tenant_id=tid,
-                    batch_id=batch.id,
-                    row_number=row["row_number"],
-                    encrypted_payload=encrypt(json.dumps(row)),
-                    source_key=row["source_key"],
-                    status=row["status"],
-                )
-            )
-        record(
-            db,
-            actor,
-            tid,
-            "intake.received",
-            batch.id,
-            request.state.correlation_id,
-            row_count=len(rows),
-            source_channel="csv_metadata",
-        )
-        return {"id": batch.id, "replayed": False}
+        return receive_metadata(db, actor, tenant_id, data, request.state.correlation_id)
 
     @app.get(base)
     def listing(tenant_id: UUID, actor: Actor, db: DB, offset: int = Query(default=0, ge=0)):

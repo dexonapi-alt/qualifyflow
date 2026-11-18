@@ -1,0 +1,94 @@
+/* Evidence in Motion: emphasis follows intent; operational layouts stay still. */
+.driver-person-panel {
+  position: relative;
+  transform-origin: center top;
+  transition:
+    transform var(--qf-motion-view) var(--qf-ease),
+    box-shadow var(--qf-motion-ui) ease,
+    border-color var(--qf-motion-fast) ease;
+}
+.driver-profile-work {
+  transition: filter var(--qf-motion-ui) ease;
+}
+.driver-person-panel:focus-within {
+  border-color: var(--qf-focus);
+  box-shadow: 0 0 0 1px var(--qf-focus);
+}
+.product .workspace-panel,
+.product .driver-onboarding-panel,
+.product .driver-profile-activity {
+  transition:
+    border-color var(--qf-motion-fast) ease,
+    box-shadow var(--qf-motion-ui) ease;
+}
+.product .management-table tbody tr,
+.product .overview-driver-table tbody tr {
+  transition: background-color var(--qf-motion-fast) ease;
+}
+.product .management-table tbody tr:focus-within,
+.product .overview-driver-table tbody tr:focus-within {
+  background-color: var(--qf-interaction-surface);
+}
+.managed-sidebar .nav,
+.product .company-row {
+  transition:
+    background-color var(--qf-motion-fast) ease,
+    color var(--qf-motion-fast) ease,
+    box-shadow var(--qf-motion-fast) ease;
+}
+.product .record-open svg,
+.product .panel-link svg:last-child,
+.product .profile-file-button svg:last-child {
+  transition: transform var(--qf-motion-fast) var(--qf-ease);
+}
+.connection-create > summary,
+.requirement-configure > summary,
+.evidence-review > summary {
+  transition: background-color var(--qf-motion-fast) ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product .workspace-panel:hover,
+  .product .driver-onboarding-panel:hover,
+  .product .driver-profile-activity:hover {
+    border-color: var(--qf-border-hover);
+    box-shadow: var(--qf-shadow-control);
+  }
+  .product .management-table tbody tr:hover,
+  .product .overview-driver-table tbody tr:hover {
+    background-color: var(--qf-interaction-surface);
+  }
+  .product .record-open:hover svg,
+  .product .panel-link:hover svg:last-child,
+  .product .profile-file-button:hover svg:last-child {
+    transform: translateX(2px);
+  }
+  .connection-create > summary:hover,
+  .requirement-configure > summary:hover,
+  .evidence-review > summary:hover {
+    background-color: var(--qf-interaction-surface);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .driver-person-panel,
+  .driver-profile-work,
+  .product .workspace-panel,
+  .product .driver-onboarding-panel,
+  .product .driver-profile-activity,
+  .product .management-table tbody tr,
+  .product .overview-driver-table tbody tr,
+  .managed-sidebar .nav,
+  .product .company-row,
+  .product .record-open svg,
+  .product .panel-link svg:last-child,
+  .product .profile-file-button svg:last-child,
+  .connection-create > summary,
+  .requirement-configure > summary,
+  .evidence-review > summary {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}

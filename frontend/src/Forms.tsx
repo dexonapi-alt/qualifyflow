@@ -51,7 +51,11 @@ export function Form({
       setError(
         e instanceof ApiError
           ? e
-          : new ApiError("Operation failed. Please retry."),
+          : new ApiError(
+              e instanceof Error
+                ? e.message
+                : "Operation failed. Please retry.",
+            ),
       );
     } finally {
       setPending(false);
@@ -197,6 +201,7 @@ export function State({ value }: { value: string }) {
     "awaiting_client",
     "awaiting_internal_approval",
     "awaiting_documents",
+    "needs_more_information",
     "missing",
     "quarantined",
     "queued",
@@ -204,6 +209,7 @@ export function State({ value }: { value: string }) {
   ];
   const working = [
     "in_review",
+    "needs_review",
     "processing",
     "scanning",
     "assigned",
@@ -232,6 +238,7 @@ export function State({ value }: { value: string }) {
     "rejected",
     "reviewed_rejected",
     "needs_attention",
+    "escalated",
   ];
   const family = pending.includes(value)
     ? "pending"

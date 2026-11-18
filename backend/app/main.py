@@ -37,6 +37,10 @@ from app.approvals.routes import register as register_approval_routes
 from app.documents.routes import register as register_document_routes
 from app.correspondence.routes import register as register_correspondence_routes
 from app.workspace import register as register_workspace_routes
+from app.integrations.routes import register as register_integration_routes
+from app.reporting.routes import register as register_reporting_routes
+from app.driver_portal.routes import register as register_personal_routes
+from app.driver_portal.service import user_payload
 
 
 @asynccontextmanager
@@ -181,7 +185,7 @@ def login(data: Login, request: Request, response: Response, db: DB):
     record(db, actor, None, "session.created", actor.id, cid(request))
     response.set_cookie("qf_session", raw, httponly=True, samesite="strict", max_age=28800)
     response.set_cookie("qf_csrf", csrf, httponly=False, samesite="strict", max_age=28800)
-    return {"user": public(actor, "id", "email", "platform_role")}
+    return {"user": user_payload(db, actor)}
 
 
 @app.get("/api/v1/auth/me")
@@ -191,7 +195,7 @@ def me(actor: Actor, request: Request, response: Response, db: DB):
     csrf = token()
     session.csrf_hash = digest(csrf)
     response.set_cookie("qf_csrf", csrf, samesite="strict", max_age=28800)
-    return {"user": public(actor, "id", "email", "platform_role")}
+    return {"user": user_payload(db, actor)}
 
 
 @app.post("/api/v1/auth/logout")
@@ -201,6 +205,16 @@ def logout(actor: Actor, request: Request, response: Response, db: DB):
     response.delete_cookie("qf_session")
     response.delete_cookie("qf_csrf")
     return {"status": "signed_out"}
+
+
+@app.post("/api/v1/invitations/inspect")
+def inspect_invitation(data: dict, request: Request, db: DB):
+    origin(request)
+    item = db.scalar(select(Invitation).where(Invitation.token_hash == digest(str(data.get("token", "")))))
+    if not item or item.status not in {"queued", "sent", "send_failed"} or item.expires_at <= now():
+        raise DomainError("INVITATION_UNAVAILABLE", "Invitation unavailable.", 400)
+    companies.allow_write(db.get(Tenant, item.tenant_id))
+    return {"role": item.role, "email": item.email, "company": db.get(Tenant, item.tenant_id).display_name}
 
 
 @app.post("/api/v1/invitations/mfa-setup")
@@ -312,7 +326,7 @@ def invites(tenant_id: UUID, actor: Actor, db: DB):
             invitation(i)
             for i in db.scalars(
                 select(Invitation)
-                .where(Invitation.tenant_id == str(tenant_id))
+                .where(Invitation.tenant_id == str(tenant_id), Invitation.role != "driver")
                 .order_by(Invitation.expires_at.desc())
                 .limit(100)
             )
@@ -427,6 +441,8 @@ def audit(tenant_id: UUID, actor: Actor, db: DB, offset: int = 0):
         events = events.where(~AuditEvent.action.startswith("approval."))
         events = events.where(~AuditEvent.action.startswith("evidence."))
         events = events.where(~AuditEvent.action.startswith("message."))
+        events = events.where(~AuditEvent.action.startswith("integration."))
+        events = events.where(~AuditEvent.action.startswith("report."))
     return {
         "items": [
             public(e, "id", "action", "resource_id", "actor_id", "details", "occurred_at", "correlation_id")
@@ -444,3 +460,7 @@ register_approval_routes(app, DB, Actor)
 register_document_routes(app, DB, Actor)
 register_correspondence_routes(app, DB, Actor)
 register_workspace_routes(app, DB, Actor)
+register_integration_routes(app, DB, Actor)
+register_reporting_routes(app, DB, Actor)
+
+register_personal_routes(app, DB, Actor)

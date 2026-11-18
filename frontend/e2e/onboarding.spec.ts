@@ -75,7 +75,7 @@ test("persisted onboarding, local delivery, MFA acceptance, activation and scope
   await page.getByRole("form", { name: "Add branch", exact: true }).screenshot({
     path: resolve(
       root,
-      "docs/design/final-product-polish/after/branch-confirmation.png",
+      "docs/design/milestone-resumption/onboarding/branch-confirmation.png",
     ),
   });
   await page
@@ -182,10 +182,21 @@ test("persisted onboarding, local delivery, MFA acceptance, activation and scope
   await expect(
     clientPage.getByRole("button", { name: "Create company", exact: true }),
   ).toHaveCount(0);
-  await expect(clientPage.locator(".single-company")).toHaveCount(1);
-  await expect(clientPage.locator(".profile-identity h2")).toHaveText(
-    "E2E Carrier " + stamp,
-  );
+  await expect(
+    clientPage.getByRole("heading", {
+      name: "Your company, at a glance.",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await clientPage
+    .getByRole("button", { name: "Company settings", exact: true })
+    .click();
+  await expect(
+    clientPage.getByRole("heading", {
+      name: "E2E Carrier " + stamp,
+      exact: true,
+    }),
+  ).toBeVisible();
   const clientSections = clientPage.getByRole("navigation", {
     name: "Company sections",
   });
@@ -218,7 +229,7 @@ test("persisted onboarding, local delivery, MFA acceptance, activation and scope
     .screenshot({
       path: resolve(
         root,
-        "docs/design/final-product-polish/after/invitation-confirmation.png",
+        "docs/design/milestone-resumption/onboarding/invitation-confirmation.png",
       ),
     });
   await clientPage.getByLabel("Invitee email address").fill(teammate);
@@ -239,7 +250,7 @@ test("persisted onboarding, local delivery, MFA acceptance, activation and scope
   await inviteForm.screenshot({
     path: resolve(
       root,
-      "docs/design/final-product-polish/after/invitation-error.png",
+      "docs/design/milestone-resumption/onboarding/invitation-error.png",
     ),
   });
   await clientPage.reload();
@@ -293,9 +304,9 @@ test("persisted onboarding, local delivery, MFA acceptance, activation and scope
     .click();
   await expect(page.locator(".heading .state")).toHaveText("active");
   await page.reload();
-  await page
-    .getByRole("button", { name: new RegExp("E2E Carrier " + stamp) })
-    .click();
+  await expect(
+    page.getByRole("heading", { name: "E2E Carrier " + stamp, exact: true }),
+  ).toBeVisible();
   await expect(page.locator(".heading .state")).toHaveText("active");
   for (const width of [375, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 });

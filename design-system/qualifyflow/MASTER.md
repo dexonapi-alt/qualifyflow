@@ -1,4 +1,12 @@
+Latest driver workspace: ADR-0026 / docs/design/DRIVER_WORKSPACE.md. Personal My onboarding has no administration sidebar and exposes only explicitly shared, engagement-scoped requests and own submissions. Existing company/specialist shell and Evidence in Motion identity remain. ADR0025 adds connected detail panels and truthful action feedback to the operational driver profile.
+
 # Current design authority — ADR-0017
+
+Latest centered-profile return: ADR-0024 supersedes visible-X dismissal. Mouse retention uses both measured card footprints plus a small corridor and return grace. Exit/reentry is reversible; keyboard/touch preserve Escape/tap-outside and focus recovery. No opacity animation; no interactive hidden background controls.
+
+Latest driver focus: ADR-0023 / docs/design/CENTERED_DRIVER_FOCUS.md replaces the local card zoom with a centered Motion translation/scale. Background stays mounted/opaque; blur only, no crossfade/dimming. Preserve shared profile tokens in the dialog portal, native focus/dismissal, keyboard/touch entry and reduced-motion placement. Other ADR0022 interaction patterns remain.
+
+Interaction extension: ADR-0022 / docs/design/INTERACTION_STRATEGY.md. Use canonical focus-scale/context-blur/shadow/hover tokens for the driver identity emphasis. Limit zoom/blur to fine-pointer desktop; suppress contextual blur during focus or expanded details and disable it for touch/reduced motion. Operational panels and rows retain fixed geometry and subtle hover/focus feedback. Runtime: interaction-polish.css.
 
 Owner BEST DESIGN.webp direction supersedes older shell freezes and header bans below. White continuous sidebar/canvas; selected navigation #2f63e3/white; pending#e9a0e8,working#9ff2a4,completed#6a90f7 with dark semantic labels. Primary ink#111111, secondary#595959, white surfaces. Canonical tokens.css, existing Inter/icons, reduced-motion support. Useful compact header, role-oriented navigation, real identities and scoped records. One wide short record preview, two balanced work sections, expandable supporting details,16px rhythm. No fake widgets/metrics/photos/legal outcomes. Current implementation: ProductChrome/ManagedOverview/managed-product.css. Read docs/design/MANAGED_PRODUCT_EXPERIENCE.md; historical guidance below applies only where consistent.
 

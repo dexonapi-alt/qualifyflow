@@ -1,0 +1,134 @@
+{
+  "scans": [
+    {
+      "name": "connected-empty",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "connected-empty",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "connected-empty",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "connected-empty",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "document-request",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "document-request",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "document-request",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "document-request",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "submitted-for-review",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "submitted-for-review",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "submitted-for-review",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "submitted-for-review",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "changes-requested",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "changes-requested",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "changes-requested",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "changes-requested",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "evidence-accepted",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "evidence-accepted",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "evidence-accepted",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "evidence-accepted",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "actualLocalInvitation": true,
+  "personalAccount": true,
+  "realDriverUploadScanSpecialistReview": true,
+  "correctionAndReplacement": true,
+  "companyVisibility": true,
+  "revocation": true,
+  "logout": true,
+  "reducedMotion": true,
+  "failedUploadRecovery": true
+}

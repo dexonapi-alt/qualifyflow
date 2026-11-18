@@ -1,0 +1,78 @@
+{
+  "scans": [
+    {
+      "name": "profile-375",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "profile-768",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "profile-1024",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "profile-1440",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "requirement-375",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "requirement-768",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "requirement-1024",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "requirement-1440",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "activity-1440",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "empty-1440",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "upload-error-1440",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "review-recorded-1440",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "complete-1440",
+      "overflow": false,
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "keyboard": true,
+  "focusRestoration": true,
+  "actualUploadScanReview": true,
+  "failedUploadNoSuccess": true,
+  "summaryRecovery": true,
+  "reducedMotion": true,
+  "fullFileNavigation": true,
+  "syntheticDriver": "8d9a7022-ac9c-4c4c-846b-149de9df7073"
+}

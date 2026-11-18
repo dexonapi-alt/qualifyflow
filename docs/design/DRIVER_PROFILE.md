@@ -1,0 +1,13 @@
+# Personal driver onboarding workspace
+
+The supplied onboarding reference organizes the experience around a person, one progress indicator and a small task list. The second reference uses restrained surfaces, aligned identities/statuses and expandable records. Translate those principles into real driver records rather than copying its photos, ratings, metrics or approval widgets.
+
+**Implemented:** Driver profile replaces the old Record overview tab. The identity panel groups the actual name/reference/company/current engagement and location/start date. An initials portrait adds recognition without inventing a photo. A wider evidence panel shows current assigned requirements, reviewed counts, a labeled native progress element and expandable requirement rows. Each View requirement action opens and focuses its actual qualification-file section. Recent activity uses authorized history actors/events; the complete record and employer engagement history remain accessible.
+
+**Visual decisions:**18px identity/checklist radii,24px desktop grid spacing, compact13px task names,25px personal name, quiet10–12px metadata, restrained mint identity surface and recognizable cobalt/pending/reviewed colors. Labels carry meaning alongside color. Responsive sections stack on mobile; long names wrap and disclosure actions remain keyboard accessible. No continuous animation or fabricated onboarding percentage.
+
+**Verification:** `frontend/scripts/driver-profile-review.mjs` exercises real isolated QA data: empty/one/multiple requirements, long names, twelve375/768/1024/1440 captures, axe, overflow, keyboard disclosure, exact file-heading focus, reduced motion, deliberate request failure and successful retry. Final captures inspected on desktop and phone. A viewer rendering regression verifies no fabricated progress or unauthorized file/management/history controls. Frontend10 tests passed; full persisted onboarding/driver browser journey1 passed. Production build result recorded in CURRENT_CONTEXT.
+
+Screenshots: [desktop](driver-profile/profile-1440.png), [mobile](driver-profile/profile-375.png), [empty/long name](driver-profile/empty-long-name-1440.png), [single requirement](driver-profile/single-requirement-1440.png), [results](driver-profile/results.json). Existing historical driver screenshots are comparison context, not same-fixture before/after proof.
+
+No backend, authentication, membership, evidence-review rule, API contract or migration change. Test records are synthetic and confined to the UI QA database. Driver photo storage/upload, personal contact fields, messaging, arbitrary to-do completion and driver-facing accounts are not implemented by this visual task. The owner's specialist training exercise remains pending.

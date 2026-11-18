@@ -17,7 +17,34 @@ class Note(Input):
     reason: str = Field(min_length=5, max_length=2000)
 
 
+class OpenRequirement(Input):
+    reason: str = Field(min_length=10, max_length=2000)
+
+
 def register(app, DB, Actor):
+    @app.post(
+        "/api/v1/tenants/{tenant_id}/drivers/{driver_id}/file/requirements/{requirement_id}/follow-up",
+        status_code=201,
+    )
+    def follow_up(
+        tenant_id: UUID,
+        driver_id: UUID,
+        requirement_id: UUID,
+        data: OpenRequirement,
+        actor: Actor,
+        db: DB,
+        request: Request,
+    ):
+        return service.open_requirement_case(
+            db,
+            actor,
+            str(tenant_id),
+            str(driver_id),
+            str(requirement_id),
+            data.reason,
+            request.state.correlation_id,
+        )
+
     base = "/api/v1/tenants/{tenant_id}/exceptions"
 
     @app.get(base)

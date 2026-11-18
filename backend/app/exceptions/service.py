@@ -8,6 +8,11 @@ from app.models import (
     IntakeAttachment,
     ApprovalRequest,
     User,
+    DriverRequirement,
+    DriverEngagement,
+    RequirementDefinition,
+    DriverIdentity,
+    Tenant,
     now,
 )
 from app.shared.authorization import authorize, allow_write
@@ -15,6 +20,7 @@ from app.shared.errors import DomainError
 from app.shared.security import encrypt, decrypt
 from app.organizations.service import lock_tenant
 from app.audit.service import record
+from app.documents.state import requirement_state
 
 TRANSITIONS = {
     "open": ["assigned", "canceled"],
@@ -61,6 +67,9 @@ def reviewer(scope):
 
 
 def unresolved_policy_blocker(db, case):
+    if case.requirement_id:
+        tenant = db.get(Tenant, case.tenant_id)
+        return requirement_state(db, case.requirement_id, tenant.timezone) != "verified"
     return case.category == "blocked_by_policy" and not db.scalar(
         select(IntakeAttachment.id).where(
             IntakeAttachment.tenant_id == case.tenant_id,
@@ -83,15 +92,31 @@ def output(db, scope, case, task, full=False, actor_id=None):
         "task_status": task.status,
     }
     if full:
-        source = db.get(IntakeItem, case.source_item_id)
-        result["source"] = json.loads(decrypt(source.encrypted_payload))
-        result["batch_id"] = source.batch_id
-        result["source_item_id"] = source.id
+        source = db.get(IntakeItem, case.source_item_id) if case.source_item_id else None
+        result["source"] = json.loads(decrypt(source.encrypted_payload)) if source else None
+        result["batch_id"] = source.batch_id if source else None
+        result["source_item_id"] = source.id if source else None
+        result["origin"] = "intake" if source else "requirement"
+        result["requirement"] = None
+        if case.requirement_id:
+            req = db.get(DriverRequirement, case.requirement_id)
+            definition = db.get(RequirementDefinition, req.definition_id)
+            driver = db.get(DriverIdentity, req.driver_id)
+            result["requirement"] = {
+                "id": req.id,
+                "driver_id": req.driver_id,
+                "engagement_id": req.engagement_id,
+                "reference": driver.reference,
+                "title": definition.title,
+                "code": definition.code,
+                "status": requirement_state(db, req.id, scope.tenant.timezone),
+            }
         result["source_linked"] = (
             db.scalar(
                 select(IntakeAttachment.id)
                 .where(
-                    IntakeAttachment.source_item_id == source.id, IntakeAttachment.tenant_id == case.tenant_id
+                    IntakeAttachment.source_item_id == case.source_item_id,
+                    IntakeAttachment.tenant_id == case.tenant_id,
                 )
                 .limit(1)
             )
@@ -128,6 +153,52 @@ def output(db, scope, case, task, full=False, actor_id=None):
             and (task.assignee_id == actor_id or reviewer(scope))
         )
     return result
+
+
+def open_requirement_case(db, actor, tid, did, rid, reason, cid):
+    # Same lock order as evidence writes: tenant, driver, requirement, case.
+    from app.documents.routes import requirement
+
+    scope, _, req = requirement(db, actor, tid, did, rid, True)
+    db.refresh(req, with_for_update=True)
+    existing = db.scalar(
+        select(ExceptionCase)
+        .where(
+            ExceptionCase.tenant_id == tid,
+            ExceptionCase.requirement_id == req.id,
+            ExceptionCase.state.not_in(["resolved", "closed", "canceled"]),
+        )
+        .with_for_update()
+    )
+    if existing:
+        task = db.scalar(select(ExceptionTask).where(ExceptionTask.case_id == existing.id))
+        return output(db, scope, existing, task, True, actor.id)
+    status = requirement_state(db, req.id, scope.tenant.timezone)
+    if status == "verified":
+        raise DomainError(
+            "STATE_TRANSITION_DENIED",
+            "This requirement has current accepted evidence; no missing-evidence case was opened.",
+            409,
+        )
+    engagement = db.get(DriverEngagement, req.engagement_id)
+    if engagement.end_date is not None:
+        raise DomainError("STATE_TRANSITION_DENIED", "Open follow-up only for a current engagement.", 409)
+    case = ExceptionCase(
+        tenant_id=tid,
+        branch_id=engagement.branch_id,
+        requirement_id=req.id,
+        category={"missing": "missing_evidence", "expired": "expired_evidence"}.get(
+            status, "evidence_review"
+        ),
+    )
+    db.add(case)
+    db.flush()
+    task = ExceptionTask(tenant_id=tid, case_id=case.id)
+    db.add(task)
+    event(db, case, actor, "exception.opened", reason, requirement_id=req.id, observed_state=status)
+    record(db, actor, tid, "exception.opened", case.id, cid, requirement_id=req.id)
+    db.flush()
+    return output(db, scope, case, task, True, actor.id)
 
 
 def listing(db, actor, tid, state=None, offset=0):

@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     private_object_dir: str = "../.local/evidence"
     clamav_host: str = "127.0.0.1"
     clamav_port: int = Field(default=3310, ge=1, le=65535)
+    provider_simulator_port: int = Field(default=8090, ge=1024, le=65535)
     session_hours: int = 8
 
     @model_validator(mode="after")

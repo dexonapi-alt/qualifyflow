@@ -1,0 +1,74 @@
+{
+  "results": [
+    {
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "reports",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "reports",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "reports",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "reports",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "requirement-case",
+      "width": 375,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "requirement-case",
+      "width": 768,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "requirement-case",
+      "width": 1024,
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "screen": "requirement-case",
+      "width": 1440,
+      "overflow": false,
+      "violations": []
+    }
+  ],
+  "failures": [],
+  "providerJob": "completed through actual separate HTTP simulator and worker"
+}

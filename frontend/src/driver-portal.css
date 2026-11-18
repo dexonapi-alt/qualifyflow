@@ -1,0 +1,472 @@
+.personal-app {
+  min-height: 100dvh;
+  background: #fff;
+  color: var(--qf-ink);
+}
+.personal-header {
+  max-width: 1120px;
+  margin: auto;
+  padding: 22px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--qf-border);
+}
+.personal-header .brand {
+  font-size: 20px;
+}
+.personal-account {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+.personal-account > span:not(.identity-mark) {
+  font-size: 11px;
+  color: var(--qf-muted);
+  overflow-wrap: anywhere;
+}
+.personal-account button {
+  font-size: 11px;
+  min-height: 36px;
+  flex-shrink: 0;
+}
+.personal-main {
+  max-width: 820px;
+  margin: auto;
+  padding: 46px 32px 24px;
+}
+.personal-heading h1 {
+  font-size: 34px;
+  letter-spacing: -1.1px;
+  line-height: 1.2;
+  font-weight: 600;
+  margin: 10px 0 12px;
+}
+.personal-heading > p {
+  max-width: 52ch;
+  color: var(--qf-muted);
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}
+.personal-eyebrow {
+  color: var(--qf-link);
+  font-size: 11px;
+  font-weight: 500;
+}
+.personal-welcome {
+  margin: 28px 0 0;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-radius: 16px;
+  background: var(--qf-profile-cover);
+}
+.personal-welcome > .identity-mark {
+  width: 44px;
+  height: 44px;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.personal-welcome > div {
+  flex: 1;
+  min-width: 0;
+}
+.personal-welcome h2 {
+  font-size: 18px;
+  line-height: 1.4;
+  letter-spacing: -0.4px;
+  font-weight: 600;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.personal-welcome p {
+  font-size: 12px;
+  margin: 5px 0 0;
+  overflow-wrap: anywhere;
+}
+.personal-welcome p span {
+  color: var(--qf-muted);
+}
+.personal-welcome button {
+  font-size: 11px;
+  background: transparent;
+}
+.personal-progress {
+  padding: 20px 24px;
+  border: 1px solid var(--qf-profile-border);
+  border-top: 0;
+  border-radius: 0 0 16px 16px;
+}
+.personal-welcome:has(+ .personal-progress) { border-radius:16px 16px 0 0; }
+.personal-progress > div {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.personal-progress strong {
+  font-size: 19px;
+  font-weight: 600;
+}
+.personal-progress span {
+  font-size: 12px;
+  color: var(--qf-muted);
+}
+.personal-progress progress {
+  appearance: none;
+  width: 100%;
+  height: 7px;
+  display: block;
+  border: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #edf0f7;
+  accent-color: var(--qf-blue);
+  margin: 14px 0 10px;
+}
+.personal-progress progress::-webkit-progress-bar {
+  background: #edf0f7;
+}
+.personal-progress progress::-webkit-progress-value {
+  background: var(--qf-blue);
+  border-radius: 8px;
+}
+.personal-progress progress::-moz-progress-bar {
+  background: var(--qf-blue);
+  border-radius: 8px;
+}
+.personal-progress p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--qf-muted);
+  margin: 0;
+}
+.personal-document-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+.personal-request {
+  border: 1px solid var(--qf-border);
+  border-radius: 16px;
+  padding: 24px;
+  min-width: 0;
+}
+.personal-request > header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.personal-request-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: var(--qf-work-pending-surface);
+  color: #733572;
+  flex-shrink: 0;
+}
+.personal-request.tone-working .personal-request-icon {
+  background: var(--qf-work-working-surface);
+  color: #315e39;
+}
+.personal-request.tone-complete .personal-request-icon {
+  background: #e5ecff;
+  color: #254a95;
+}
+.personal-request h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 7px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.personal-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  font-size: 10px;
+  border-radius: 5px;
+  background: #f7e4f8;
+  color: #733572;
+}
+.personal-status::before {
+  content: "";
+  height: 4px;
+  width: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.personal-status.working {
+  background: #e5f6e8;
+  color: #315e39;
+}
+.personal-status.complete {
+  background: #e5ecff;
+  color: #254a95;
+}
+.personal-status.attention {
+  background: #fff0df;
+  color: #7a4512;
+}
+.personal-instructions {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 18px 0;
+}
+.personal-upload {
+  border-top: 1px solid var(--qf-border);
+  padding-top: 12px;
+}
+.personal-upload summary,
+.personal-submissions summary {
+  cursor: pointer;
+  font-size: 12px;
+  padding: 8px 0;
+  font-weight: 500;
+}
+.personal-upload label {
+  display: block;
+  font-size: 12px;
+  margin: 12px 0 8px;
+}
+.personal-upload label small {
+  display: block;
+  font-weight: 400;
+  color: var(--qf-muted);
+  margin-top: 4px;
+  font-size: 11px;
+}
+.personal-upload input {
+  max-width: 100%;
+  width: 100%;
+  font-size: 12px;
+  min-height: 44px;
+  background: #fafbfc;
+}
+.personal-upload button {
+  margin-top: 12px;
+  font-size: 12px;
+}
+.personal-confirmation {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--qf-success-soft);
+  color: #17613f;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.personal-confirmation svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.personal-help {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--qf-muted);
+}
+.personal-submissions {
+  margin-top: 16px;
+}
+.personal-submissions ul {
+  padding: 0;
+  margin: 8px 0 0;
+  list-style: none;
+}
+.personal-submissions li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 12px 0;
+  border-top: 1px solid var(--qf-border);
+  font-size: 11px;
+}
+.personal-submissions li > div {
+  flex: 1;
+  min-width: 0;
+}
+.personal-submissions li svg {
+  flex-shrink: 0;
+}
+.personal-submissions strong {
+  display: block;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.personal-submissions small,
+.personal-submissions li span {
+  display: block;
+  color: var(--qf-muted);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+.personal-submissions li a {
+  flex-shrink: 0;
+}
+.personal-support {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 28px 0;
+  border-top: 1px solid var(--qf-border);
+  padding-top: 24px;
+  font-size: 12px;
+}
+.personal-support p {
+  color: var(--qf-muted);
+  line-height: 1.6;
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+.personal-support strong {
+  font-weight: 500;
+}
+.personal-empty {
+  margin-top: 24px;
+  padding: 28px 24px;
+  border: 1px dashed #d4dbe5;
+  border-radius: 14px;
+  line-height: 1.7;
+}
+.personal-empty h2 {
+  font-size: 19px;
+  letter-spacing: -0.4px;
+  margin: 12px 0 6px;
+}
+.personal-empty p {
+  font-size: 13px;
+  color: var(--qf-muted);
+  max-width: 52ch;
+}
+.personal-environment {
+  text-align: center;
+  padding: 0 20px 28px;
+  font-size: 10px;
+  color: var(--qf-muted);
+}
+.personal-company-select {
+  display: block;
+  margin-top: 24px;
+  font-size: 12px;
+}
+.personal-company-select select {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+}
+.personal-workspace-switch {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  font-size: 12px;
+}
+.driver-portal-access {
+  padding: 20px 24px;
+  border: 1px solid var(--qf-border);
+  border-radius: 16px;
+  font-size: 12px;
+  line-height: 1.7;
+  min-width: 0;
+}
+.driver-portal-access header {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.driver-portal-access header h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  flex: 1;
+}
+.driver-portal-access p {
+  color: var(--qf-muted);
+  overflow-wrap: anywhere;
+}
+.driver-portal-access p strong {
+  color: var(--qf-ink);
+  font-weight: 500;
+}
+.driver-portal-access summary {
+  cursor: pointer;
+  padding: 8px 0;
+  font-weight: 500;
+}
+.driver-portal-access form {
+  margin-top: 12px;
+}
+@media (max-width: 600px) {
+  .personal-header {
+    padding: 18px 20px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .personal-header .brand {
+    font-size: 18px;
+  }
+  .personal-account {
+    gap: 7px;
+    margin-left: auto;
+  }
+  .personal-account > span:not(.identity-mark) {
+    display: none;
+  }
+  .personal-account button {
+    min-height: 44px;
+    font-size: 10px;
+  }
+  .personal-main {
+    padding: 30px 20px 20px;
+  }
+  .personal-heading h1 {
+    font-size: 29px;
+  }
+  .personal-heading > p {
+    font-size: 13px;
+  }
+  .personal-welcome,
+  .personal-progress,
+  .personal-request {
+    padding: 20px 18px;
+  }
+  .personal-welcome {
+    flex-wrap: wrap;
+  }
+  .personal-welcome button {
+    min-height: 44px;
+  }
+  .personal-welcome h2 {
+    font-size: 17px;
+  }
+  .personal-submissions li {
+    flex-wrap: wrap;
+  }
+  .personal-submissions li a {
+    margin-left: 25px;
+    min-height: 32px;
+  }
+  .personal-upload button {
+    min-height: 44px;
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .personal-app *,
+  .personal-app *::before {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

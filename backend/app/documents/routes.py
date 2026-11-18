@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import Request, Response, Query
 from pydantic import Field
-from sqlalchemy import select, func, case as sql_case
+from sqlalchemy import select, func, case as sql_case, or_
 
 from app.models import (
     RequirementDefinition,
@@ -35,6 +35,7 @@ from app.shared.security import encrypt, decrypt
 from app.audit.service import record
 from app.drivers.service import identity
 from app.documents import storage
+from app.driver_portal.requests import latest_request
 from app.exceptions.service import event as case_event
 
 
@@ -128,11 +129,12 @@ def invalidate_related_cases(db, actor, tenant_id, requirement_id, source_item_i
     )
     if source_item_id:
         sources.add(source_item_id)
-    if not sources:
-        return
     for case in db.scalars(
         select(ExceptionCase)
-        .where(ExceptionCase.tenant_id == tenant_id, ExceptionCase.source_item_id.in_(sources))
+        .where(
+            ExceptionCase.tenant_id == tenant_id,
+            or_(ExceptionCase.source_item_id.in_(sources), ExceptionCase.requirement_id == requirement_id),
+        )
         .with_for_update()
     ):
         # Version invalidation is an integrity effect, never a case-resolution override.
@@ -186,6 +188,8 @@ def file_data(db, actor, tid, did):
                     "revision": ev.revision,
                     "version": ev.version,
                     "filename": decrypt(ev.encrypted_filename),
+                    "submitted_via": ev.submitted_via,
+                    "uploaded_by": db.get(User, ev.actor_id).email,
                     "status": ev.status,
                     "media_type": ev.media_type,
                     "byte_size": ev.byte_size,
@@ -215,6 +219,7 @@ def file_data(db, actor, tid, did):
                     else None,
                 }
             )
+        shared = latest_request(db, req.id)
         status = "missing"
         if accepted:
             status = "expired" if accepted.expires_on and accepted.expires_on < today else "verified"
@@ -232,7 +237,19 @@ def file_data(db, actor, tid, did):
                 "policy_revision": definition.revision,
                 "applicability": definition.applicability,
                 "requires_expiry": definition.requires_expiry,
+                "driver_visible": bool(shared and shared.visible),
+                "driver_instructions": decrypt(shared.encrypted_instructions) if shared else "",
+                "driver_request_version": shared.version if shared else 0,
                 "status": status,
+                "follow_up_id": db.scalar(
+                    select(ExceptionCase.id)
+                    .where(
+                        ExceptionCase.tenant_id == tid,
+                        ExceptionCase.requirement_id == req.id,
+                        ExceptionCase.state.not_in(["resolved", "closed", "canceled"]),
+                    )
+                    .limit(1)
+                ),
                 "evidence": versions,
             }
         )
@@ -242,6 +259,143 @@ def file_data(db, actor, tid, did):
         "can_review": scope.role in {"client_admin", "reviewer", "specialist"},
         "operational_only": True,
     }
+
+
+
+def receive_evidence(db, actor, tid, did, rid, data, scope, driver, req, correlation_id, submitted_via="staff"):
+    try:
+        content = base64.b64decode(data.content_base64, validate=True)
+    except ValueError:
+        raise DomainError("INVALID_FILE", "File encoding is invalid.", 422)
+    if not content or len(content) > 2 * 1024 * 1024:
+        raise DomainError("FILE_QUOTA", "Use a nonempty PDF, PNG or JPEG up to 2 MiB.", 422)
+    filename = data.filename.replace("\\", "/").split("/")[-1]
+    extension = PurePath(filename).suffix.lower()
+    media = None
+    if extension == ".pdf" and content.startswith(b"%PDF-") and b"%%EOF" in content[-2048:]:
+        media = "application/pdf"
+    elif extension == ".png" and content.startswith(b"\x89PNG\r\n\x1a\n") and b"IEND" in content[-16:]:
+        media = "image/png"
+    elif (
+        extension in {".jpg", ".jpeg"}
+        and content.startswith(b"\xff\xd8\xff")
+        and content.endswith(b"\xff\xd9")
+    ):
+        media = "image/jpeg"
+    if not media:
+        raise DomainError(
+            "FILE_TYPE_DENIED",
+            "Extension and file signature must agree for a supported PDF, PNG or JPEG.",
+            422,
+        )
+    digest = hashlib.sha256(content).hexdigest()
+    request_hash = hashlib.sha256(
+        json.dumps([rid, filename, digest, str(data.source_item_id)]).encode()
+    ).hexdigest()
+    prior = db.scalar(
+        select(EvidenceVersion).where(
+            EvidenceVersion.tenant_id == tid,
+            EvidenceVersion.actor_id == actor.id,
+            EvidenceVersion.command_id == str(data.command_id),
+        )
+    )
+    if prior:
+        if prior.request_hash != request_hash:
+            raise DomainError(
+                "IDEMPOTENCY_CONFLICT", "Upload command was used with different evidence.", 409
+            )
+        return {"id": prior.id, "status": prior.status, "replayed": True}
+    if data.source_item_id:
+        source = db.scalar(
+            select(IntakeItem).where(
+                IntakeItem.id == str(data.source_item_id), IntakeItem.tenant_id == tid
+            )
+        )
+        if not source or source.status in {"validation_failed", "duplicate_detected"}:
+            raise DomainError("SOURCE_MISMATCH", "Source cannot support this evidence attachment.", 409)
+        payload = json.loads(decrypt(source.encrypted_payload))["normalized"]
+        batch = db.get(IntakeBatch, source.batch_id)
+        target_engagement = db.get(DriverEngagement, req.engagement_id)
+        if (scope.branch_id and batch.branch_id != scope.branch_id) or (
+            batch.branch_id and batch.branch_id != target_engagement.branch_id
+        ):
+            raise DomainError(
+                "SOURCE_MISMATCH", "Source location and selected engagement do not agree.", 409
+            )
+        definition = db.get(RequirementDefinition, req.definition_id)
+        if (
+            payload["external_driver_ref"] != driver.reference
+            or payload["report_type"] != definition.category
+        ):
+            raise DomainError(
+                "SOURCE_MISMATCH",
+                "Verify the exact driver reference and requirement category before attachment.",
+                409,
+            )
+    if (
+        db.scalar(
+            select(func.count())
+            .select_from(EvidenceVersion)
+            .where(
+                EvidenceVersion.tenant_id == tid, EvidenceVersion.status.in_(["quarantined", "scanning"])
+            )
+        )
+        or 0
+    ) >= 50:
+        raise DomainError(
+            "FILE_QUOTA",
+            "This company already has 50 files awaiting scanning. Process those before uploading more.",
+            429,
+        )
+    if (
+        db.scalar(
+            select(func.count()).select_from(EvidenceVersion).where(EvidenceVersion.tenant_id == tid)
+        )
+        or 0
+    ) >= 1000:
+        raise DomainError(
+            "FILE_QUOTA",
+            "Local synthetic storage is limited to 1,000 evidence versions per company.",
+            429,
+        )
+    revision = (
+        db.scalar(select(func.max(EvidenceVersion.revision)).where(EvidenceVersion.requirement_id == rid))
+        or 0
+    ) + 1
+    key = uid()
+    storage.put(key, content)
+    evidence = EvidenceVersion(
+        id=uid(),
+        tenant_id=tid,
+        requirement_id=rid,
+        source_item_id=str(data.source_item_id) if data.source_item_id else None,
+        actor_id=actor.id,
+        submitted_via=submitted_via,
+        command_id=str(data.command_id),
+        request_hash=request_hash,
+        revision=revision,
+        object_key=key,
+        encrypted_filename=encrypt(filename),
+        media_type=media,
+        byte_size=len(content),
+        sha256=digest,
+    )
+    db.add(evidence)
+    db.flush()
+    invalidate_related_cases(
+        db, actor, tid, rid, evidence.source_item_id, evidence.id, "evidence.version_received"
+    )
+    record(
+        db,
+        actor,
+        tid,
+        "evidence.uploaded",
+        evidence.id,
+        correlation_id,
+        requirement_id=rid,
+        revision=revision,
+    )
+    return {"id": evidence.id, "status": evidence.status}
 
 
 def register(app, DB, Actor):
@@ -462,138 +616,7 @@ def register(app, DB, Actor):
     ):
         tid, did, rid = str(tenant_id), str(driver_id), str(requirement_id)
         scope, driver, req = requirement(db, actor, tid, did, rid, True)
-        try:
-            content = base64.b64decode(data.content_base64, validate=True)
-        except ValueError:
-            raise DomainError("INVALID_FILE", "File encoding is invalid.", 422)
-        if not content or len(content) > 2 * 1024 * 1024:
-            raise DomainError("FILE_QUOTA", "Use a nonempty PDF, PNG or JPEG up to 2 MiB.", 422)
-        filename = data.filename.replace("\\", "/").split("/")[-1]
-        extension = PurePath(filename).suffix.lower()
-        media = None
-        if extension == ".pdf" and content.startswith(b"%PDF-") and b"%%EOF" in content[-2048:]:
-            media = "application/pdf"
-        elif extension == ".png" and content.startswith(b"\x89PNG\r\n\x1a\n") and b"IEND" in content[-16:]:
-            media = "image/png"
-        elif (
-            extension in {".jpg", ".jpeg"}
-            and content.startswith(b"\xff\xd8\xff")
-            and content.endswith(b"\xff\xd9")
-        ):
-            media = "image/jpeg"
-        if not media:
-            raise DomainError(
-                "FILE_TYPE_DENIED",
-                "Extension and file signature must agree for a supported PDF, PNG or JPEG.",
-                422,
-            )
-        digest = hashlib.sha256(content).hexdigest()
-        request_hash = hashlib.sha256(
-            json.dumps([rid, filename, digest, str(data.source_item_id)]).encode()
-        ).hexdigest()
-        prior = db.scalar(
-            select(EvidenceVersion).where(
-                EvidenceVersion.tenant_id == tid,
-                EvidenceVersion.actor_id == actor.id,
-                EvidenceVersion.command_id == str(data.command_id),
-            )
-        )
-        if prior:
-            if prior.request_hash != request_hash:
-                raise DomainError(
-                    "IDEMPOTENCY_CONFLICT", "Upload command was used with different evidence.", 409
-                )
-            return {"id": prior.id, "status": prior.status, "replayed": True}
-        if data.source_item_id:
-            source = db.scalar(
-                select(IntakeItem).where(
-                    IntakeItem.id == str(data.source_item_id), IntakeItem.tenant_id == tid
-                )
-            )
-            if not source or source.status in {"validation_failed", "duplicate_detected"}:
-                raise DomainError("SOURCE_MISMATCH", "Source cannot support this evidence attachment.", 409)
-            payload = json.loads(decrypt(source.encrypted_payload))["normalized"]
-            batch = db.get(IntakeBatch, source.batch_id)
-            target_engagement = db.get(DriverEngagement, req.engagement_id)
-            if (scope.branch_id and batch.branch_id != scope.branch_id) or (
-                batch.branch_id and batch.branch_id != target_engagement.branch_id
-            ):
-                raise DomainError(
-                    "SOURCE_MISMATCH", "Source location and selected engagement do not agree.", 409
-                )
-            definition = db.get(RequirementDefinition, req.definition_id)
-            if (
-                payload["external_driver_ref"] != driver.reference
-                or payload["report_type"] != definition.category
-            ):
-                raise DomainError(
-                    "SOURCE_MISMATCH",
-                    "Verify the exact driver reference and requirement category before attachment.",
-                    409,
-                )
-        if (
-            db.scalar(
-                select(func.count())
-                .select_from(EvidenceVersion)
-                .where(
-                    EvidenceVersion.tenant_id == tid, EvidenceVersion.status.in_(["quarantined", "scanning"])
-                )
-            )
-            or 0
-        ) >= 50:
-            raise DomainError(
-                "FILE_QUOTA",
-                "This company already has 50 files awaiting scanning. Process those before uploading more.",
-                429,
-            )
-        if (
-            db.scalar(
-                select(func.count()).select_from(EvidenceVersion).where(EvidenceVersion.tenant_id == tid)
-            )
-            or 0
-        ) >= 1000:
-            raise DomainError(
-                "FILE_QUOTA",
-                "Local synthetic storage is limited to 1,000 evidence versions per company.",
-                429,
-            )
-        revision = (
-            db.scalar(select(func.max(EvidenceVersion.revision)).where(EvidenceVersion.requirement_id == rid))
-            or 0
-        ) + 1
-        key = uid()
-        storage.put(key, content)
-        evidence = EvidenceVersion(
-            id=uid(),
-            tenant_id=tid,
-            requirement_id=rid,
-            source_item_id=str(data.source_item_id) if data.source_item_id else None,
-            actor_id=actor.id,
-            command_id=str(data.command_id),
-            request_hash=request_hash,
-            revision=revision,
-            object_key=key,
-            encrypted_filename=encrypt(filename),
-            media_type=media,
-            byte_size=len(content),
-            sha256=digest,
-        )
-        db.add(evidence)
-        db.flush()
-        invalidate_related_cases(
-            db, actor, tid, rid, evidence.source_item_id, evidence.id, "evidence.version_received"
-        )
-        record(
-            db,
-            actor,
-            tid,
-            "evidence.uploaded",
-            evidence.id,
-            request.state.correlation_id,
-            requirement_id=rid,
-            revision=revision,
-        )
-        return {"id": evidence.id, "status": evidence.status}
+        return receive_evidence(db, actor, tid, did, rid, data, scope, driver, req, request.state.correlation_id)
 
     @app.post(base + "/requirements/{requirement_id}/evidence/{evidence_id}/review")
     def review(

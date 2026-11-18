@@ -86,6 +86,11 @@ export function ReadinessSignal({ status }: { status: string }) {
 }
 
 const auditLabels: Record<string, string> = {
+  "evidence.received": "Evidence received privately",
+  verified_evidence: "Evidence review accepted",
+  rejected_evidence: "Evidence review rejected",
+  needs_more_information: "More information requested",
+  escalated: "Review escalated",
   "driver.created": "Driver registered",
   "driver.engagement_created": "Employer engagement created",
   "driver.engagement_changed": "Engagement state changed",
@@ -110,6 +115,10 @@ const auditLabels: Record<string, string> = {
   "membership.revoked": "Membership revoked",
 };
 
+export function auditActionLabel(action: string) {
+  return auditLabels[action] || action.replaceAll(/[._]/g, " ");
+}
+
 export function AuditAction({ action }: { action: string }) {
   const people = /^(user|invitation|membership|driver)\./.test(action);
   return (
@@ -128,7 +137,7 @@ export function AuditAction({ action }: { action: string }) {
       </span>
       <div>
         <strong>
-          {auditLabels[action] || action.replaceAll(/[._]/g, " ")}
+          {auditActionLabel(action)}
         </strong>
         <code>{action}</code>
       </div>

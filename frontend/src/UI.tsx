@@ -19,11 +19,18 @@ export function Icon({
     | "pause"
     | "message"
     | "file"
+    | "report"
     | "info"
     | "shield";
   size?: number;
 }) {
   const paths = {
+    report: (
+      <>
+        <path d="M4 4v16h16" />
+        <path d="M8 16v-5M12 16V7M16 16V9" />
+      </>
+    ),
     message: <path d="M4 4h16v13H9l-5 4V4Z" />,
     file: (
       <>

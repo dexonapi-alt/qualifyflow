@@ -30,7 +30,13 @@ export async function api<T>(path: string, data?: unknown): Promise<T> {
     );
   return body;
 }
-export type User = { id: string; email: string; platform_role: string | null };
+export type User = {
+  id: string;
+  email: string;
+  platform_role: string | null;
+  driver_portal?: boolean;
+  company_access?: boolean;
+};
 export type Company = {
   id: string;
   display_name: string;

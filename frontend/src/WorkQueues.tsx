@@ -13,10 +13,19 @@ type CaseRow = {
   task_status: string;
 };
 type CaseDetail = CaseRow & {
-  source_item_id: string;
+  source_item_id: string | null;
   source_linked: boolean;
   batch_id: string;
-  source: { normalized: Record<string, string>; reason: string };
+  source: { normalized: Record<string, string>; reason: string } | null;
+  requirement: {
+    id: string;
+    driver_id: string;
+    reference: string;
+    engagement_id: string;
+    title: string;
+    code: string;
+    status: string;
+  } | null;
   allowed_states: string[];
   can_request_approval: boolean;
   events: {
@@ -58,10 +67,12 @@ export function WorkQueues({
   companyId,
   mode,
   onOpenDriver,
+  initialCaseId,
 }: {
   companyId: string;
   mode: "exceptions" | "approvals";
   onOpenDriver?: (driver: string, source: string) => void;
+  initialCaseId?: string;
 }) {
   const base = "/tenants/" + companyId;
   const requestCommand = useRef(crypto.randomUUID());
@@ -75,6 +86,20 @@ export function WorkQueues({
   const [error, setError] = useState(""),
     [notice, setNotice] = useState("");
   const [revision, setRevision] = useState(0);
+  useEffect(() => {
+    if (mode !== "exceptions" || !initialCaseId) return;
+    let current = true;
+    api<CaseDetail>(base + "/exceptions/" + initialCaseId)
+      .then((value) => {
+        if (current) setSelected(value);
+      })
+      .catch((e) => {
+        if (current) setError(e.message);
+      });
+    return () => {
+      current = false;
+    };
+  }, [base, mode, initialCaseId]);
   useEffect(() => {
     let active = true;
     setPage(null);
@@ -164,40 +189,76 @@ export function WorkQueues({
           </div>
           <div className="case-context">
             <section>
-              <h3>Incoming source</h3>
-              <dl>
-                <dt>Report reference</dt>
-                <dd>{selected.source.normalized.external_report_ref}</dd>
-                <dt>Driver reference</dt>
-                <dd>{selected.source.normalized.external_driver_ref}</dd>
-                <dt>Report category</dt>
-                <dd>{words(selected.source.normalized.report_type)}</dd>
-              </dl>
-              {onOpenDriver &&
-                !["validation_failed", "duplicate_detected"].includes(
-                  selected.category,
-                ) && (
+              <h3>
+                {selected.requirement
+                  ? "Driver requirement"
+                  : "Incoming source"}
+              </h3>
+              {selected.requirement && (
+                <>
+                  <dl>
+                    <dt>Driver reference</dt>
+                    <dd>{selected.requirement.reference}</dd>
+                    <dt>Requirement</dt>
+                    <dd>{selected.requirement.title}</dd>
+                    <dt>Current evidence state</dt>
+                    <dd>
+                      <State value={selected.requirement.status} />
+                    </dd>
+                  </dl>
                   <button
                     className="secondary"
-                    onClick={() => {
-                      setError("");
-                      void api<{ driver_id: string; source_item_id: string }>(
-                        base +
-                          "/intake-batches/" +
-                          selected.batch_id +
-                          "/items/" +
-                          selected.source_item_id +
-                          "/driver-candidate",
-                      )
-                        .then((match) =>
-                          onOpenDriver(match.driver_id, match.source_item_id),
-                        )
-                        .catch((e) => setError(e.message));
-                    }}
+                    onClick={() =>
+                      onOpenDriver?.(selected.requirement!.driver_id, "")
+                    }
                   >
-                    Open driver file for evidence review
+                    Open driver file
                   </button>
-                )}
+                </>
+              )}
+              {selected.source && (
+                <>
+                  <dl>
+                    <dt>Report reference</dt>
+                    <dd>{selected.source.normalized.external_report_ref}</dd>
+                    <dt>Driver reference</dt>
+                    <dd>{selected.source.normalized.external_driver_ref}</dd>
+                    <dt>Report category</dt>
+                    <dd>{words(selected.source.normalized.report_type)}</dd>
+                  </dl>
+                  {onOpenDriver &&
+                    !["validation_failed", "duplicate_detected"].includes(
+                      selected.category,
+                    ) && (
+                      <button
+                        className="secondary"
+                        onClick={() => {
+                          setError("");
+                          void api<{
+                            driver_id: string;
+                            source_item_id: string;
+                          }>(
+                            base +
+                              "/intake-batches/" +
+                              selected.batch_id +
+                              "/items/" +
+                              selected.source_item_id +
+                              "/driver-candidate",
+                          )
+                            .then((match) =>
+                              onOpenDriver(
+                                match.driver_id,
+                                match.source_item_id,
+                              ),
+                            )
+                            .catch((e) => setError(e.message));
+                        }}
+                      >
+                        Open driver file for evidence review
+                      </button>
+                    )}
+                </>
+              )}
             </section>
             <section>
               <h3>
@@ -212,7 +273,10 @@ export function WorkQueues({
                   follow-up; the case has not been closed automatically.
                 </p>
               )}
-              <p>{selected.source.reason}</p>
+              <p>
+                {selected.source?.reason ||
+                  "Follow up on this configured requirement. Evidence must be reviewed before administrative resolution; client communication follows the approved recipient process."}
+              </p>
               <p className="muted">
                 Administrative resolution does not attach evidence or change
                 driver qualification. Missing evidence controls cannot be

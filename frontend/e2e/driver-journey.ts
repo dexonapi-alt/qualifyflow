@@ -4,7 +4,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 export async function driverJourney(page: Page, root: string, stamp: string) {
-  const output = resolve(root, "docs/design/m2-drivers");
+  const output = resolve(root, "docs/design/milestone-resumption/drivers");
   mkdirSync(output, { recursive: true });
   const results: object[] = [];
   async function capture(name: string) {
@@ -26,6 +26,17 @@ export async function driverJourney(page: Page, root: string, stamp: string) {
     }
   }
   async function companySection(name: string) {
+    if (name === "Drivers") {
+      if (page.viewportSize()!.width <= 760)
+        await page
+          .getByRole("button", { name: "Open navigation", exact: true })
+          .click();
+      await page
+        .locator("#workspace-navigation")
+        .getByRole("button", { name, exact: true })
+        .click();
+      return;
+    }
     await page
       .getByRole("navigation", { name: "Company sections" })
       .getByRole("button", { name, exact: true })

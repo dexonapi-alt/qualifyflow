@@ -11,12 +11,14 @@ import { Icon } from "./UI";
 import { IdentityMark, AuditAction } from "./VisualInformation";
 import { EmptyState } from "./EmptyState";
 import { QualificationFile } from "./QualificationFile";
+import { DriverProfile } from "./DriverProfile";
 
 const label = (value: string) => value.replaceAll("_", " ");
 
 export function DriverWorkspace({
   companyId,
   companyName,
+  configuration = {},
   access,
   branches,
   initialDriverId,
@@ -26,6 +28,7 @@ export function DriverWorkspace({
 }: {
   companyId: string;
   companyName: string;
+  configuration?: Record<string, unknown>;
   access: DriverAccess;
   branches: Branch[];
   initialDriverId?: string;
@@ -100,6 +103,7 @@ export function DriverWorkspace({
         startInFile={selected === initialDriverId && access.can_write}
         id={selected}
         companyName={companyName}
+        configuration={configuration}
         branches={branches}
         onBack={() => {
           setSelected("");
@@ -324,6 +328,7 @@ function DriverRecord({
   base,
   id,
   companyName,
+  configuration,
   branches,
   onBack,
   sourceItemId,
@@ -332,6 +337,7 @@ function DriverRecord({
   base: string;
   id: string;
   companyName: string;
+  configuration: Record<string, unknown>;
   branches: Branch[];
   onBack: () => void;
   sourceItemId?: string;
@@ -344,6 +350,7 @@ function DriverRecord({
     ),
     [revision, setRevision] = useState(0);
   const [confirmation, setConfirmation] = useState("");
+  const [focusedRequirement, setFocusedRequirement] = useState<string>();
   const [historyBusy, setHistoryBusy] = useState(false);
   const path = base + "/" + id;
   useEffect(() => {
@@ -380,7 +387,10 @@ function DriverRecord({
     </>
   );
   return (
-    <section className="driver-record" aria-label="Driver record">
+    <section
+      className={"driver-record" + (mode === "summary" ? " is-profile" : "")}
+      aria-label="Driver record"
+    >
       <button className="quiet driver-back" onClick={onBack}>
         ← Back to drivers
       </button>
@@ -401,37 +411,39 @@ function DriverRecord({
       {!record && !error && <p role="status">Loading driver record…</p>}
       {record && (
         <>
-          <div className="driver-record-heading">
-            <div className="person-cell">
-              <IdentityMark
-                value={record.first_name + " " + record.last_name}
-              />
-              <div>
-                <h2>
-                  {record.first_name} {record.last_name}
-                </h2>
-                <p>
-                  {record.reference} · {companyName}
-                </p>
+          {mode !== "summary" && (
+            <div className="driver-record-heading">
+              <div className="person-cell">
+                <IdentityMark
+                  value={record.first_name + " " + record.last_name}
+                />
+                <div>
+                  <h2>
+                    {record.first_name} {record.last_name}
+                  </h2>
+                  <p>
+                    {record.reference} · {companyName}
+                  </p>
+                </div>
+              </div>
+              <div className="driver-record-tools">
+                {current && (
+                  <span className="driver-state-context">
+                    Engagement <State value={current.status} />
+                  </span>
+                )}
+                <button
+                  className="quiet"
+                  onClick={() => {
+                    setError("");
+                    setRevision((n) => n + 1);
+                  }}
+                >
+                  Refresh record
+                </button>
               </div>
             </div>
-            <div className="driver-record-tools">
-              {current && (
-                <span className="driver-state-context">
-                  Engagement <State value={current.status} />
-                </span>
-              )}
-              <button
-                className="quiet"
-                onClick={() => {
-                  setError("");
-                  setRevision((n) => n + 1);
-                }}
-              >
-                Refresh record
-              </button>
-            </div>
-          </div>
+          )}
           <nav className="driver-sections" aria-label="Driver sections">
             {[
               "summary",
@@ -451,7 +463,7 @@ function DriverRecord({
               >
                 {
                   {
-                    summary: "Record overview",
+                    summary: "Driver profile",
                     file: "Qualification file",
                     engagement: "Manage engagement",
                     correction: "Identity correction",
@@ -467,63 +479,23 @@ function DriverRecord({
               path={path + "/file"}
               engagements={record.engagements}
               sourceItemId={sourceItemId}
+              initialRequirementId={focusedRequirement}
             />
           )}
           {mode === "summary" && (
-            <div className="driver-overview">
-              <section className="driver-identity-panel">
-                <h3>Driver identity</h3>
-                <dl className="driver-facts">
-                  <div>
-                    <dt>Company reference</dt>
-                    <dd>{record.reference}</dd>
-                  </div>
-                  <div>
-                    <dt>First name</dt>
-                    <dd>{record.first_name}</dd>
-                  </div>
-                  <div>
-                    <dt>Last name</dt>
-                    <dd>{record.last_name}</dd>
-                  </div>
-                  <div>
-                    <dt>Identity version</dt>
-                    <dd>{record.version}</dd>
-                  </div>
-                </dl>
-                <p className="muted">
-                  This driver identity is private to this company and separate
-                  from a login account.
-                </p>
-              </section>
-              <section className="driver-current-panel">
-                <h3>Current engagement in your scope</h3>
-                {current ? (
-                  <>
-                    <div className="driver-current-location">
-                      <Icon name="location" size={22} />
-                      <strong>{current.branch_name || "Whole company"}</strong>
-                    </div>
-                    <p>
-                      Started{" "}
-                      <time dateTime={current.start_date}>
-                        {current.start_date}
-                      </time>
-                    </p>
-                    <State value={current.status} />
-                  </>
-                ) : (
-                  <p>
-                    No current engagement is visible in your scope. Historical
-                    engagements remain below.
-                  </p>
-                )}
-                <p className="operational-note">
-                  Operational status only. Regulatory applicability has not been
-                  determined.
-                </p>
-              </section>
-            </div>
+            <DriverProfile
+              record={record}
+              companyName={companyName}
+              configuration={configuration}
+              path={path}
+              onFile={(requirement) => {
+                setFocusedRequirement(requirement);
+                setMode("file");
+              }}
+              onManage={() => setMode("engagement")}
+              onHistory={() => setMode("history")}
+              onRefresh={() => setRevision((v) => v + 1)}
+            />
           )}
           {mode === "engagement" && record.access.can_write && (
             <div className="driver-management">

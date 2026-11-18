@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import {
   api,
   type Company,
@@ -72,6 +72,7 @@ export function ProductSidebar({
     icon:
       | "users"
       | "file"
+      | "report"
       | "message"
       | "service"
       | "info"
@@ -167,6 +168,14 @@ export function ProductSidebar({
             {item("summary", "Company settings", "companies")}
             {context.access?.can_correct &&
               item("requirements", "Requirements", "file")}
+            {context.access?.can_correct &&
+              item("reports", "Reports", "report")}
+            {context.access &&
+              !context.access.branch_id &&
+              ["client_admin", "reviewer", "specialist"].includes(
+                context.access.role,
+              ) &&
+              item("integrations", "Connections", "branch")}
           </nav>
         )}
         {context && (

@@ -189,6 +189,24 @@ class DriverEngagement(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
 
 
+class DriverPortalAccess(Base):
+    __tablename__ = "driver_portal_access"
+    __table_args__ = (
+        ForeignKeyConstraint(["tenant_id", "driver_id", "engagement_id"],
+            ["driver_engagements.tenant_id", "driver_engagements.driver_id", "driver_engagements.id"]),
+        CheckConstraint("status IN ('invited','active','revoked')", name="driver_portal_status_valid"),
+        Index("uq_driver_portal_current", "tenant_id", "engagement_id", unique=True,
+            postgresql_where=text("status IN ('invited','active')")),
+    )
+    id: Mapped[str] = mapped_column(ForeignKey("invitations.id"), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    driver_id: Mapped[str] = mapped_column(String(36))
+    engagement_id: Mapped[str] = mapped_column(String(36))
+    user_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"), index=True)
+    status: Mapped[str] = mapped_column(String(24), default="invited")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+
+
 class DriverHistory(Base):
     __tablename__ = "driver_history"
     __table_args__ = (
@@ -294,15 +312,92 @@ class ExceptionCase(Base):
         UniqueConstraint("source_item_id"),
         ForeignKeyConstraint(["tenant_id", "branch_id"], ["branches.tenant_id", "branches.id"]),
         ForeignKeyConstraint(["tenant_id", "source_item_id"], ["intake_items.tenant_id", "intake_items.id"]),
+        ForeignKeyConstraint(
+            ["tenant_id", "requirement_id"], ["driver_requirements.tenant_id", "driver_requirements.id"]
+        ),
+        CheckConstraint("(source_item_id IS NULL) <> (requirement_id IS NULL)", name="ck_case_one_origin"),
+        Index(
+            "uq_active_requirement_case",
+            "requirement_id",
+            unique=True,
+            postgresql_where=text(
+                "requirement_id IS NOT NULL AND state NOT IN ('resolved', 'closed', 'canceled')"
+            ),
+        ),
     )
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
     tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
     branch_id: Mapped[str | None] = mapped_column(String(36))
-    source_item_id: Mapped[str] = mapped_column(String(36))
+    source_item_id: Mapped[str | None] = mapped_column(String(36))
+    requirement_id: Mapped[str | None] = mapped_column(String(36))
     category: Mapped[str] = mapped_column(String(32))
     severity: Mapped[str] = mapped_column(String(24), default="normal")
     state: Mapped[str] = mapped_column(String(32), default="open")
     version: Mapped[int] = mapped_column(Integer, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class ProviderConnection(Base):
+    __tablename__ = "provider_connections"
+    __table_args__ = (UniqueConstraint("tenant_id", "id"),)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    owner_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    provider_code: Mapped[str] = mapped_column(String(40), default="local_synthetic")
+    account_ref: Mapped[str] = mapped_column(String(100))
+    encrypted_credential: Mapped[str] = mapped_column(Text)
+    encrypted_signing_key: Mapped[str] = mapped_column(Text)
+    credential_version: Mapped[int] = mapped_column(Integer, default=1)
+    state: Mapped[str] = mapped_column(String(32), default="configured")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    tested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    verified_credential_version: Mapped[int | None] = mapped_column(Integer)
+    cursor: Mapped[int] = mapped_column(Integer, default=0)
+    sync_interval_minutes: Mapped[int] = mapped_column(Integer, default=60)
+    sync_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    next_sync_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    sync_approved_by: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    sync_credential_version: Mapped[int | None] = mapped_column(Integer)
+    sync_error: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class ProviderEvent(Base):
+    __tablename__ = "provider_events"
+    __table_args__ = (
+        UniqueConstraint("connection_id", "event_id"),
+        ForeignKeyConstraint(
+            ["tenant_id", "connection_id"], ["provider_connections.tenant_id", "provider_connections.id"]
+        ),
+        ForeignKeyConstraint(["tenant_id", "batch_id"], ["intake_batches.tenant_id", "intake_batches.id"]),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    connection_id: Mapped[str] = mapped_column(String(36), index=True)
+    event_id: Mapped[str] = mapped_column(String(100))
+    body_hash: Mapped[str] = mapped_column(String(64))
+    encrypted_source: Mapped[str] = mapped_column(Text)
+    mapping_version: Mapped[str] = mapped_column(String(32), default="qf-sandbox-v1")
+    batch_id: Mapped[str] = mapped_column(String(36))
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class IntegrationRun(Base):
+    __tablename__ = "integration_runs"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["tenant_id", "connection_id"], ["provider_connections.tenant_id", "provider_connections.id"]
+        ),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    connection_id: Mapped[str] = mapped_column(String(36), index=True)
+    operation: Mapped[str] = mapped_column(String(24))
+    state: Mapped[str] = mapped_column(String(24))
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    received_count: Mapped[int] = mapped_column(Integer, default=0)
+    duplicate_count: Mapped[int] = mapped_column(Integer, default=0)
+    correlation_id: Mapped[str] = mapped_column(String(64))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
 
 
@@ -413,6 +508,7 @@ class EvidenceVersion(Base):
         ForeignKeyConstraint(["tenant_id", "source_item_id"], ["intake_items.tenant_id", "intake_items.id"]),
     )
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    submitted_via: Mapped[str] = mapped_column(String(16), default="staff")
     tenant_id: Mapped[str] = mapped_column(String(36), index=True)
     requirement_id: Mapped[str] = mapped_column(String(36), index=True)
     source_item_id: Mapped[str | None] = mapped_column(String(36))
@@ -537,6 +633,51 @@ class ClientMessage(Base):
     responded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
+class ProviderJob(Base):
+    __tablename__ = "provider_jobs"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "actor_id", "command_id"),
+        ForeignKeyConstraint(
+            ["tenant_id", "connection_id"], ["provider_connections.tenant_id", "provider_connections.id"]
+        ),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    connection_id: Mapped[str] = mapped_column(String(36), index=True)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    command_id: Mapped[str] = mapped_column(String(36))
+    credential_version: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(32), default="queued", index=True)
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    available_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    lease_token: Mapped[str | None] = mapped_column(String(36))
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    run_id: Mapped[str | None] = mapped_column(ForeignKey("integration_runs.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class ExportJob(Base):
+    __tablename__ = "export_jobs"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "actor_id", "command_id"),
+        ForeignKeyConstraint(["tenant_id", "branch_id"], ["branches.tenant_id", "branches.id"]),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    branch_id: Mapped[str | None] = mapped_column(String(36))
+    command_id: Mapped[str] = mapped_column(String(36))
+    encrypted_purpose: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(24), default="queued")
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    row_count: Mapped[int | None] = mapped_column(Integer)
+    encrypted_content: Mapped[str | None] = mapped_column(Text)
+    sha256: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
 class MessageEvent(Base):
     __tablename__ = "message_events"
     __table_args__ = (UniqueConstraint("message_id", "actor_id", "command_id"),)
@@ -547,3 +688,19 @@ class MessageEvent(Base):
     action: Mapped[str] = mapped_column(String(64))
     encrypted_body: Mapped[str] = mapped_column(Text)
     occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class DriverDocumentRequest(Base):
+    __tablename__ = "driver_document_requests"
+    __table_args__ = (
+        UniqueConstraint("requirement_id", "version"),
+        ForeignKeyConstraint(["tenant_id", "requirement_id"], ["driver_requirements.tenant_id", "driver_requirements.id"]),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    requirement_id: Mapped[str] = mapped_column(String(36), index=True)
+    version: Mapped[int] = mapped_column(Integer)
+    visible: Mapped[bool] = mapped_column(Boolean)
+    encrypted_instructions: Mapped[str] = mapped_column(Text)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)

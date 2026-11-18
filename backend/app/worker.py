@@ -108,6 +108,19 @@ def create_celery():
 
     worker.task(name="qualifyflow.in_app_messages")(publish_pending)
     worker.conf.beat_schedule["in-app-messages"] = {"task": "qualifyflow.in_app_messages", "schedule": 5.0}
+    from app.integrations.jobs import process_pending as provider_pending, schedule_pending
+
+    worker.task(name="qualifyflow.provider_pulls")(provider_pending)
+    worker.task(name="qualifyflow.provider_schedules")(schedule_pending)
+    worker.conf.beat_schedule["provider-pulls"] = {"task": "qualifyflow.provider_pulls", "schedule": 5.0}
+    worker.conf.beat_schedule["provider-schedules"] = {
+        "task": "qualifyflow.provider_schedules",
+        "schedule": 30.0,
+    }
+    from app.reporting.service import process_pending as process_exports
+
+    worker.task(name="qualifyflow.exports")(process_exports)
+    worker.conf.beat_schedule["exports"] = {"task": "qualifyflow.exports", "schedule": 5.0}
     return worker
 
 

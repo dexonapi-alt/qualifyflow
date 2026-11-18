@@ -17,6 +17,8 @@ build/
 .local/
 playwright-report/
 test-results/
+docs/design/**/failure*.png
+docs/design/**/failure*.txt
 .vscode/
 .idea/
 .DS_Store

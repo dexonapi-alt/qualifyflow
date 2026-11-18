@@ -1,0 +1,525 @@
+.driver-profile-layout {
+  --profile-mint: var(--qf-profile-cover);
+  --profile-ink: var(--qf-ink, #111);
+  --profile-border: var(--qf-profile-border);
+  display: grid;
+  grid-template-columns: minmax(250px, 0.85fr) minmax(0, 1.9fr);
+  gap: 24px;
+  align-items: start;
+  margin-top: 24px;
+  color: var(--profile-ink);
+}
+.driver-record.is-profile {
+  padding-top: 6px;
+}
+.driver-record.is-profile .driver-back {
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.driver-record.is-profile .driver-sections {
+  margin-bottom: 16px;
+}
+.driver-record.is-profile .driver-profile-layout {
+  margin-top: 18px;
+}
+.profile-refresh {
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.driver-person-panel {
+  border: 1px solid var(--profile-border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+}
+.driver-person-cover {
+  background: var(--profile-mint);
+  padding: 20px 24px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #345848;
+  font-size: 12px;
+}
+.driver-person-body {
+  padding: 0 24px 22px;
+}
+.driver-portrait {
+  position: relative;
+  margin-top: -35px;
+  width: 76px;
+  height: 76px;
+  border: 5px solid #fff;
+  border-radius: 24px;
+  background: #fff;
+}
+.driver-portrait .identity-mark {
+  width: 66px;
+  height: 66px;
+  border-radius: 19px;
+  font-size: 24px;
+  font-weight: 500;
+  background: #d9e8fd;
+  color: #244883;
+}
+.driver-person-body h2 {
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.7px;
+  margin: 17px 0 7px;
+  overflow-wrap: anywhere;
+}
+.driver-person-reference {
+  font-size: 12px;
+  color: #595959;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+.driver-person-company {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 20px 0 10px;
+  overflow-wrap: anywhere;
+}
+.driver-person-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.driver-person-state > span:last-child {
+  font-size: 10px;
+  color: #595959;
+}
+.driver-person-facts {
+  margin: 24px 0;
+  border-top: 1px solid var(--profile-border);
+  padding-top: 18px;
+}
+.driver-person-facts > div {
+  margin-bottom: 15px;
+}
+.driver-person-facts dt {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #595959;
+  font-size: 11px;
+}
+.driver-person-facts dd {
+  margin: 5px 0 0 23px;
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.profile-file-button {
+  width: 100%;
+  font-size: 12px;
+  justify-content: center;
+  padding: 11px 10px;
+}
+.profile-manage {
+  width: 100%;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.driver-person-privacy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #595959;
+  margin: 20px 0 0;
+}
+.driver-profile-work {
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+}
+.driver-onboarding-panel {
+  border: 1px solid var(--profile-border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+}
+.driver-onboarding-panel > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 25px 26px 20px;
+  gap: 16px;
+}
+.profile-section-context {
+  display: block;
+  font-size: 11px;
+  color: #595959;
+  margin-bottom: 8px;
+}
+.driver-onboarding-panel h3 {
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+  margin: 0;
+}
+.profile-work-symbol {
+  width: 40px;
+  height: 40px;
+  background: #f0f4ff;
+  color: #2f63e3;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+.driver-evidence-progress {
+  padding: 0 26px 18px;
+}
+.driver-evidence-progress > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  margin: 2px 0 14px;
+}
+.driver-evidence-progress strong {
+  font-size: 20px;
+  font-weight: 600;
+}
+.driver-evidence-progress strong span {
+  font-size: 12px;
+  font-weight: 400;
+}
+.driver-evidence-progress > div > span {
+  color: #595959;
+  font-size: 11px;
+}
+.driver-evidence-progress progress {
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  display: block;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #edf0f7;
+  accent-color: #2f63e3;
+}
+.driver-evidence-progress progress::-webkit-progress-bar {
+  background: #edf0f7;
+  border-radius: 8px;
+}
+.driver-evidence-progress progress::-webkit-progress-value {
+  background: #2f63e3;
+  border-radius: 8px;
+}
+.driver-evidence-progress progress::-moz-progress-bar {
+  background: #2f63e3;
+  border-radius: 8px;
+}
+.driver-evidence-progress p {
+  margin: 10px 0 0;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #595959;
+}
+.profile-work-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 0 26px 20px;
+  font-size: 11px;
+}
+.profile-work-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.profile-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.profile-dot.needed {
+  background: #e9a0e8;
+}
+.profile-dot.reviewing {
+  background: #9ff2a4;
+}
+.profile-dot.reviewed {
+  background: #6a90f7;
+}
+.driver-onboarding-tasks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid var(--profile-border);
+}
+.driver-onboarding-tasks li + li {
+  border-top: 1px solid var(--profile-border);
+}
+.driver-onboarding-tasks summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px;
+  cursor: pointer;
+  list-style: none;
+  min-height: 74px;
+  transition: background 150ms ease;
+}
+.driver-onboarding-tasks summary::-webkit-details-marker {
+  display: none;
+}
+.driver-onboarding-tasks summary:hover {
+  background: #fafbfe;
+}
+.driver-onboarding-tasks summary:focus-visible {
+  outline: 2px solid #2f63e3;
+  outline-offset: -3px;
+}
+.profile-task-symbol {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.profile-task-symbol.needs-evidence {
+  background: #f9e5fa;
+  color: #793a78;
+}
+.profile-task-symbol.is-reviewing {
+  background: #e7f6e9;
+  color: #315e39;
+}
+.profile-task-symbol.is-reviewed {
+  background: #e7eeff;
+  color: #244c9e;
+}
+.profile-task-title {
+  min-width: 0;
+  flex: 1;
+}
+.profile-task-title strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.profile-task-title small {
+  display: block;
+  font-size: 10px;
+  color: #595959;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+.profile-task-state {
+  font-size: 10px;
+  padding: 4px 7px;
+  border-radius: 5px;
+  background: #eef0f5;
+  color: #333;
+  text-align: center;
+  max-width: 130px;
+  line-height: 1.4;
+}
+.profile-task-state.state-verified {
+  background: #e5ecff;
+  color: #254a95;
+}
+.profile-task-state.state-missing {
+  background: #f7e4f8;
+  color: #733572;
+}
+.profile-task-state.state-needs_review {
+  background: #e5f6e8;
+  color: #315e39;
+}
+.profile-task-state.state-expired,
+.profile-task-state.state-rejected {
+  background: #fff0df;
+  color: #7a4512;
+}
+.profile-task-chevron {
+  color: #595959;
+  transition: transform 150ms;
+}
+details[open] > summary .profile-task-chevron {
+  transform: rotate(180deg);
+}
+.profile-task-details {
+  margin: 0 24px 20px 66px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #595959;
+}
+.profile-task-details button {
+  font-size: 11px;
+  margin-top: 6px;
+}
+.profile-empty {
+  padding: 12px 26px 30px;
+  line-height: 1.6;
+}
+.profile-empty h4 {
+  margin: 12px 0 7px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.profile-empty p {
+  font-size: 13px;
+  color: #595959;
+  max-width: 50ch;
+  margin: 0 0 18px;
+}
+.profile-empty button {
+  font-size: 12px;
+}
+.profile-empty-mark {
+  background: #f1f4ff;
+  color: #2f63e3;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+}
+.profile-loading {
+  padding: 0 26px 26px;
+  font-size: 13px;
+  color: #595959;
+}
+.driver-profile-activity {
+  border: 1px solid var(--profile-border);
+  border-radius: 16px;
+  padding: 20px 24px;
+}
+.driver-profile-activity > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.driver-profile-activity h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.driver-profile-activity header p {
+  margin: 5px 0 0;
+  font-size: 11px;
+  color: #595959;
+}
+.driver-profile-activity header button {
+  font-size: 11px;
+}
+.driver-profile-activity ol {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+}
+.driver-profile-activity li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 0;
+}
+.driver-profile-activity li + li {
+  border-top: 1px solid var(--profile-border);
+}
+.driver-profile-activity li > div {
+  min-width: 0;
+  font-size: 12px;
+}
+.driver-profile-activity li p {
+  font-size: 11px;
+  color: #595959;
+  margin: 4px 0;
+  overflow-wrap: anywhere;
+}
+.driver-profile-activity time {
+  font-size: 10px;
+  color: #595959;
+}
+.profile-activity-empty {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #595959;
+  margin-top: 18px;
+}
+.driver-profile-activity .audit-action code {
+  display: none;
+}
+@media (max-width: 1100px) {
+  .driver-profile-layout {
+    grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.4fr);
+    gap: 18px;
+  }
+  .driver-onboarding-tasks summary {
+    flex-wrap: wrap;
+  }
+  .profile-task-state {
+    margin-left: 42px;
+  }
+  .profile-task-chevron {
+    margin-left: auto;
+  }
+}
+@media (max-width: 760px) {
+  .driver-profile-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .driver-person-cover {
+    padding-bottom: 48px;
+  }
+  .driver-person-body h2 {
+    font-size: 25px;
+  }
+  .driver-person-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .profile-task-title {
+    flex-basis: calc(100% - 54px);
+  }
+  .profile-task-state {
+    margin-top: -2px;
+  }
+  .driver-onboarding-panel > header {
+    padding: 22px 20px;
+  }
+  .driver-evidence-progress {
+    padding-inline: 20px;
+  }
+  .profile-work-legend {
+    padding-inline: 20px;
+  }
+  .driver-onboarding-tasks summary {
+    padding-inline: 20px;
+  }
+  .profile-task-details {
+    margin-left: 20px;
+  }
+  .driver-person-body button {
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .driver-profile-layout *,
+  .driver-profile-layout *::before,
+  .driver-profile-layout *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

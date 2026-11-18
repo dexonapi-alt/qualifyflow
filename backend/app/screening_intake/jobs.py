@@ -77,6 +77,20 @@ def process_pending(limit=5):
                 scope = authorize(db, actor, tid, "drivers:write")
                 allow_write(tenant)
                 batch = db.get(IntakeBatch, job.batch_id)
+                if batch.source_channel in {"provider_webhook", "provider_pull"}:
+                    from app.models import ProviderConnection, ProviderEvent
+                    from app.integrations.service import delegated_owner
+
+                    origin = db.scalar(
+                        select(ProviderEvent).where(
+                            ProviderEvent.batch_id == batch.id, ProviderEvent.tenant_id == tid
+                        )
+                    )
+                    if not origin:
+                        raise DomainError("FORBIDDEN", "Provider receipt origin unavailable.", 403)
+                    connection = db.get(ProviderConnection, origin.connection_id)
+                    if delegated_owner(db, connection).id != actor.id:
+                        raise DomainError("FORBIDDEN", "Provider authority changed.", 403)
                 if scope.branch_id and batch.branch_id != scope.branch_id:
                     raise DomainError("FORBIDDEN", "Scope changed.", 403)
                 for item in db.scalars(

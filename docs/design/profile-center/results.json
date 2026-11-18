@@ -1,0 +1,42 @@
+{
+  "scans": [
+    {
+      "name": "desktop-centered",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "width-768",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "width-1024",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "reduced-motion",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "name": "touch-375",
+      "overflow": false,
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "noContentFade": true,
+  "originalFootprintRetains": true,
+  "automaticReturn": true,
+  "interruptibleReturn": true,
+  "noVisibleCloseButton": true,
+  "stableBackground": true,
+  "focusTrap": true,
+  "escapeAndBackdrop": true,
+  "focusRestoration": true,
+  "realFileAction": true,
+  "touch": true,
+  "reducedMotion": true
+}

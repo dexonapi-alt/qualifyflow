@@ -3,8 +3,7 @@ import hashlib
 from sqlalchemy import select, or_, and_
 from sqlalchemy.orm import Session
 from app.db import engine
-from app.models import EvidenceVersion, DriverRequirement, DriverEngagement, User, Tenant, now, uid
-from app.shared.authorization import authorize, allow_write
+from app.models import EvidenceVersion, DriverRequirement, User, Tenant, now, uid
 from app.audit.service import record
 from app.documents import storage, scanner
 
@@ -43,12 +42,10 @@ def process_scans(limit=2):
                 continue
             actor = db.get(User, evidence.actor_id)
             try:
-                scope = authorize(db, actor, tenant.id, "drivers:write")
-                allow_write(tenant)
+                from app.driver_portal.security import authorize_upload_actor
+
                 req = db.get(DriverRequirement, evidence.requirement_id)
-                engagement = db.get(DriverEngagement, req.engagement_id)
-                if scope.branch_id and scope.branch_id != engagement.branch_id:
-                    raise ValueError("Scope changed")
+                authorize_upload_actor(db, actor, tenant, req, evidence.submitted_via)
             except Exception:
                 evidence.status, evidence.scan_error = "scan_failed", "CURRENT_AUTHORIZATION_OR_TENANT_DENIED"
                 continue
@@ -82,6 +79,18 @@ def process_scans(limit=2):
             evidence = db.scalar(select(EvidenceVersion).where(EvidenceVersion.id == eid).with_for_update())
             if evidence.lease_token != lease or evidence.status != "scanning":
                 continue
+            try:
+                from app.driver_portal.security import authorize_upload_actor
+
+                authorize_upload_actor(
+                    db,
+                    db.get(User, actor_id),
+                    db.get(Tenant, tid),
+                    db.get(DriverRequirement, evidence.requirement_id),
+                    evidence.submitted_via,
+                )
+            except Exception:
+                status, engine_name, error = "scan_failed", None, "CURRENT_AUTHORIZATION_OR_TENANT_DENIED"
             evidence.status, evidence.scanner, evidence.scan_error = status, engine_name, error
             evidence.scanned_at = now() if status == "needs_review" else None
             evidence.lease_until = None
