@@ -121,6 +121,13 @@ def create_celery():
 
     worker.task(name="qualifyflow.exports")(process_exports)
     worker.conf.beat_schedule["exports"] = {"task": "qualifyflow.exports", "schedule": 5.0}
+    from app.screening_intake.background import process_pending as process_imports
+
+    worker.task(name="qualifyflow.spreadsheet_imports")(process_imports)
+    worker.conf.beat_schedule["spreadsheet-imports"] = {
+        "task": "qualifyflow.spreadsheet_imports",
+        "schedule": 5.0,
+    }
     return worker
 
 

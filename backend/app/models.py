@@ -192,11 +192,18 @@ class DriverEngagement(Base):
 class DriverPortalAccess(Base):
     __tablename__ = "driver_portal_access"
     __table_args__ = (
-        ForeignKeyConstraint(["tenant_id", "driver_id", "engagement_id"],
-            ["driver_engagements.tenant_id", "driver_engagements.driver_id", "driver_engagements.id"]),
+        ForeignKeyConstraint(
+            ["tenant_id", "driver_id", "engagement_id"],
+            ["driver_engagements.tenant_id", "driver_engagements.driver_id", "driver_engagements.id"],
+        ),
         CheckConstraint("status IN ('invited','active','revoked')", name="driver_portal_status_valid"),
-        Index("uq_driver_portal_current", "tenant_id", "engagement_id", unique=True,
-            postgresql_where=text("status IN ('invited','active')")),
+        Index(
+            "uq_driver_portal_current",
+            "tenant_id",
+            "engagement_id",
+            unique=True,
+            postgresql_where=text("status IN ('invited','active')"),
+        ),
     )
     id: Mapped[str] = mapped_column(ForeignKey("invitations.id"), primary_key=True)
     tenant_id: Mapped[str] = mapped_column(String(36), index=True)
@@ -281,6 +288,66 @@ class IntakeItem(Base):
     encrypted_payload: Mapped[str] = mapped_column(Text)
     source_key: Mapped[str] = mapped_column(String(64), index=True)
     status: Mapped[str] = mapped_column(String(32))
+
+
+class IntakeSpreadsheetSource(Base):
+    __tablename__ = "intake_spreadsheet_sources"
+    __table_args__ = (
+        ForeignKeyConstraint(["tenant_id", "batch_id"], ["intake_batches.tenant_id", "intake_batches.id"]),
+    )
+    batch_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    encrypted_original: Mapped[str] = mapped_column(Text)
+    encrypted_metadata: Mapped[str] = mapped_column(Text)
+    sha256: Mapped[str] = mapped_column(String(64))
+    request_hash: Mapped[str] = mapped_column(String(64))
+    mapping_version: Mapped[str] = mapped_column(String(32), default="column-map-v1")
+
+
+class IntakeCorrection(Base):
+    __tablename__ = "intake_corrections"
+    __table_args__ = (
+        UniqueConstraint("parent_item_id"),
+        UniqueConstraint("child_item_id"),
+        UniqueConstraint("tenant_id", "actor_id", "command_id"),
+        ForeignKeyConstraint(["tenant_id", "parent_item_id"], ["intake_items.tenant_id", "intake_items.id"]),
+        ForeignKeyConstraint(["tenant_id", "child_item_id"], ["intake_items.tenant_id", "intake_items.id"]),
+        CheckConstraint("parent_item_id <> child_item_id", name="intake_correction_different_rows"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    parent_item_id: Mapped[str] = mapped_column(String(36))
+    child_item_id: Mapped[str] = mapped_column(String(36))
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    command_id: Mapped[str] = mapped_column(String(36))
+    request_hash: Mapped[str] = mapped_column(String(64))
+    encrypted_reason: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class IntakeMatch(Base):
+    __tablename__ = "intake_matches"
+    __table_args__ = (
+        UniqueConstraint("source_item_id"),
+        UniqueConstraint("tenant_id", "actor_id", "command_id"),
+        ForeignKeyConstraint(["tenant_id", "source_item_id"], ["intake_items.tenant_id", "intake_items.id"]),
+        ForeignKeyConstraint(
+            ["tenant_id", "driver_id", "engagement_id"],
+            ["driver_engagements.tenant_id", "driver_engagements.driver_id", "driver_engagements.id"],
+        ),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    source_item_id: Mapped[str] = mapped_column(String(36))
+    driver_id: Mapped[str] = mapped_column(String(36))
+    engagement_id: Mapped[str] = mapped_column(String(36))
+    driver_version: Mapped[int] = mapped_column(Integer)
+    engagement_version: Mapped[int] = mapped_column(Integer)
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    command_id: Mapped[str] = mapped_column(String(36))
+    request_hash: Mapped[str] = mapped_column(String(64))
+    encrypted_basis: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
 
 
 class IntakeJob(Base):
@@ -455,6 +522,111 @@ class ApprovalDecision(Base):
     outcome: Mapped[str] = mapped_column(String(32))
     encrypted_reason: Mapped[str] = mapped_column(Text)
     decided_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class SpreadsheetImportSource(Base):
+    __tablename__ = "spreadsheet_import_sources"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "id"),
+        UniqueConstraint("tenant_id", "actor_id", "command_id"),
+        ForeignKeyConstraint(["tenant_id", "branch_id"], ["branches.tenant_id", "branches.id"]),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    branch_id: Mapped[str | None] = mapped_column(String(36))
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    command_id: Mapped[str] = mapped_column(String(36))
+    request_hash: Mapped[str] = mapped_column(String(64))
+    sha256: Mapped[str] = mapped_column(String(64))
+    encrypted_file: Mapped[str] = mapped_column(Text)
+    encrypted_metadata: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class SpreadsheetImportJob(Base):
+    __tablename__ = "spreadsheet_import_jobs"
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["tenant_id", "id"], ["spreadsheet_import_sources.tenant_id", "spreadsheet_import_sources.id"]
+        ),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    status: Mapped[str] = mapped_column(String(32), default="queued")
+    phase: Mapped[str] = mapped_column(String(16), default="inspect")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    lease_token: Mapped[str | None] = mapped_column(String(36))
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_code: Mapped[str | None] = mapped_column(String(64))
+    row_count: Mapped[int] = mapped_column(Integer, default=0)
+    processed_rows: Mapped[int] = mapped_column(Integer, default=0)
+    encrypted_table: Mapped[str | None] = mapped_column(Text)
+    encrypted_config: Mapped[str] = mapped_column(Text)
+    encrypted_preview: Mapped[str | None] = mapped_column(Text)
+    confirmed_version: Mapped[int | None] = mapped_column(Integer)
+    correlation_id: Mapped[str] = mapped_column(String(64))
+
+
+class SpreadsheetImportPart(Base):
+    __tablename__ = "spreadsheet_import_parts"
+    __table_args__ = (
+        UniqueConstraint("source_id", "part_number"),
+        UniqueConstraint("batch_id"),
+        ForeignKeyConstraint(
+            ["tenant_id", "source_id"],
+            ["spreadsheet_import_sources.tenant_id", "spreadsheet_import_sources.id"],
+        ),
+        ForeignKeyConstraint(["tenant_id", "batch_id"], ["intake_batches.tenant_id", "intake_batches.id"]),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    source_id: Mapped[str] = mapped_column(String(36))
+    batch_id: Mapped[str] = mapped_column(String(36))
+    part_number: Mapped[int] = mapped_column(Integer)
+    first_row: Mapped[int] = mapped_column(Integer)
+    row_count: Mapped[int] = mapped_column(Integer)
+
+
+class IntakeCorrectionRun(Base):
+    __tablename__ = "intake_correction_runs"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "actor_id", "command_id"),
+        ForeignKeyConstraint(["tenant_id", "batch_id"], ["intake_batches.tenant_id", "intake_batches.id"]),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    batch_id: Mapped[str] = mapped_column(String(36))
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    command_id: Mapped[str] = mapped_column(String(36))
+    request_hash: Mapped[str] = mapped_column(String(64))
+    encrypted_payload: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+
+
+class IntakeMappingTemplate(Base):
+    __tablename__ = "intake_mapping_templates"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "template_id", "revision"),
+        UniqueConstraint("tenant_id", "actor_id", "command_id"),
+        ForeignKeyConstraint(
+            ["tenant_id", "source_batch_id"], ["intake_batches.tenant_id", "intake_batches.id"]
+        ),
+        ForeignKeyConstraint(["tenant_id", "branch_id"], ["branches.tenant_id", "branches.id"]),
+        CheckConstraint("revision > 0", name="mapping_positive_revision"),
+    )
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
+    tenant_id: Mapped[str] = mapped_column(ForeignKey("tenants.id"), index=True)
+    template_id: Mapped[str] = mapped_column(String(36))
+    revision: Mapped[int] = mapped_column(Integer)
+    branch_id: Mapped[str | None] = mapped_column(String(36))
+    source_batch_id: Mapped[str] = mapped_column(String(36))
+    actor_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    command_id: Mapped[str] = mapped_column(String(36))
+    request_hash: Mapped[str] = mapped_column(String(64))
+    encrypted_configuration: Mapped[str] = mapped_column(Text)
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
 
 
 class RequirementDefinition(Base):
@@ -694,7 +866,9 @@ class DriverDocumentRequest(Base):
     __tablename__ = "driver_document_requests"
     __table_args__ = (
         UniqueConstraint("requirement_id", "version"),
-        ForeignKeyConstraint(["tenant_id", "requirement_id"], ["driver_requirements.tenant_id", "driver_requirements.id"]),
+        ForeignKeyConstraint(
+            ["tenant_id", "requirement_id"], ["driver_requirements.tenant_id", "driver_requirements.id"]
+        ),
     )
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
     tenant_id: Mapped[str] = mapped_column(String(36), index=True)

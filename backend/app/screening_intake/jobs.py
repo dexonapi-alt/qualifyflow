@@ -96,6 +96,10 @@ def process_pending(limit=5):
                 for item in db.scalars(
                     select(IntakeItem).where(IntakeItem.batch_id == batch.id).order_by(IntakeItem.row_number)
                 ):
+                    from app.screening_intake.lineage import replacement
+
+                    if replacement(db, item.id):
+                        continue
                     if db.scalar(select(ExceptionCase.id).where(ExceptionCase.source_item_id == item.id)):
                         continue
                     payload = json.loads(decrypt(item.encrypted_payload))

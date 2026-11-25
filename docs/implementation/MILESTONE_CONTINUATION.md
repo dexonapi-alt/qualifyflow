@@ -1,3 +1,15 @@
+## M3 bulk correction update ? 2026-11-19
+
+Bounded source-row correction preview, partial result recording, immutable run history, safe replay and failed-row retry are implemented under ADR-0029. Original-row and explicit-match protections remain. Next recommended slice: larger background imports; transforms, corrected-CSV reupload/reassignment and full milestone exits remain open. Exact verification is in CURRENT_CONTEXT.
+
+## M3 saved mappings update ? 2026-11-19
+
+Saved column-layout templates, revisions, location scoping, retirement and stale-application protection are implemented and verified under ADR-0028. Bulk correction/replay is the next recommended slice. See CURRENT_CONTEXT for exact verification and remaining gates.
+
+## M3 update ? 2026-11-19
+
+The reviewed spreadsheet slice is implemented: bounded CSV/XLSX mapping, private source provenance, explicit reference/engagement matching, linked correction receipts and error exports. See ADR-0027 and CURRENT_CONTEXT for executed evidence and remaining exit gates. This supersedes earlier fixed-CSV-only intake limitations without declaring every milestone complete.
+
 # Milestone continuation — 18–19 November 2026
 
 The owner resumed unfinished engineering and postponed the specialist walkthrough. This continuation preserves the approved product shell and all four original specifications. It does not mark every milestone complete.

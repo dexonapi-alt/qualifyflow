@@ -15,6 +15,7 @@ type CaseRow = {
 type CaseDetail = CaseRow & {
   source_item_id: string | null;
   source_linked: boolean;
+  source_replacement?: {batch_id:string;item_id:string}|null;
   batch_id: string;
   source: { normalized: Record<string, string>; reason: string } | null;
   requirement: {
@@ -216,6 +217,7 @@ export function WorkQueues({
                   </button>
                 </>
               )}
+              {selected.source_replacement && <div className="file-source-context"><strong>This source has a corrected receipt</strong><p>The original is retained for audit. Continue processing from its replacement; existing case approvals must be revalidated.</p><a href={"#"+new URLSearchParams({company:companyId,view:"intake",batch:selected.source_replacement.batch_id})}>Open corrected receipt</a></div>}
               {selected.source && (
                 <>
                   <dl>

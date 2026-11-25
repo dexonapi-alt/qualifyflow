@@ -70,10 +70,18 @@ def unresolved_policy_blocker(db, case):
     if case.requirement_id:
         tenant = db.get(Tenant, case.tenant_id)
         return requirement_state(db, case.requirement_id, tenant.timezone) != "verified"
+    from app.screening_intake.lineage import replacement
+
+    active_source = case.source_item_id
+    for _ in range(10):
+        child = replacement(db, active_source)
+        if not child:
+            break
+        active_source = child.id
     return case.category == "blocked_by_policy" and not db.scalar(
         select(IntakeAttachment.id).where(
             IntakeAttachment.tenant_id == case.tenant_id,
-            IntakeAttachment.source_item_id == case.source_item_id,
+            IntakeAttachment.source_item_id == active_source,
         )
     )
 
@@ -96,6 +104,10 @@ def output(db, scope, case, task, full=False, actor_id=None):
         result["source"] = json.loads(decrypt(source.encrypted_payload)) if source else None
         result["batch_id"] = source.batch_id if source else None
         result["source_item_id"] = source.id if source else None
+        from app.screening_intake.lineage import replacement
+
+        child = replacement(db, source.id) if source else None
+        result["source_replacement"] = {"batch_id": child.batch_id, "item_id": child.id} if child else None
         result["origin"] = "intake" if source else "requirement"
         result["requirement"] = None
         if case.requirement_id:

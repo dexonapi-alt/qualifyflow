@@ -17,4 +17,5 @@ import "./interaction-polish.css";
 import "./profile-focus.css";
 import "./driver-experience.css";
 import "./driver-portal.css";
+import "./spreadsheet-intake.css";
 createRoot(document.getElementById("root")!).render(<App />);

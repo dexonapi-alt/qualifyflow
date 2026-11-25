@@ -112,7 +112,7 @@ def parse(db, scope, data):
                         "name": driver.first_name + " " + driver.last_name,
                     }
                     status = "blocked_by_policy"
-                    reason = "Exact-reference candidate found. Open the driver file and review supporting evidence against the matching requirement; nothing is attached yet."
+                    reason = "Exact-reference candidate found. Verify the driver and engagement before processing supporting evidence; nothing is attached yet."
                 if key in seen:
                     status, reason = "duplicate_detected", "Repeated source report/type within this preview."
             seen.add(key)
@@ -135,7 +135,17 @@ def parse(db, scope, data):
         raise DomainError("INVALID_CSV", "CSV could not be parsed. Check quoting and column structure.", 422)
 
 
-def receive_metadata(db, actor, tenant_id, data, correlation_id, source_channel="csv_metadata"):
+def receive_metadata(
+    db,
+    actor,
+    tenant_id,
+    data,
+    correlation_id,
+    source_channel="csv_metadata",
+    superseded_ids=None,
+    row_errors=None,
+    row_offset=0,
+):
     tid = str(tenant_id)
     branch = str(data.branch_id) if data.branch_id else None
     scope = scope_for(db, actor, tid, branch, True)
@@ -178,6 +188,10 @@ def receive_metadata(db, actor, tenant_id, data, correlation_id, source_channel=
         )
     )
     for row in rows:
+        row["source_row_number"] = row["row_number"] + row_offset
+        if row_errors and row["row_number"] in row_errors:
+            row["status"], row["reason"] = "validation_failed", row_errors[row["row_number"]]
+            row["errors"] = [row["reason"]]
         # No candidate IDs or automatic links are persisted. Review must revalidate later.
         row["candidate"] = None
         if row["status"] not in {"validation_failed", "duplicate_detected"}:
@@ -188,6 +202,7 @@ def receive_metadata(db, actor, tenant_id, data, correlation_id, source_channel=
                     IntakeItem.tenant_id == tid,
                     IntakeItem.source_key == row["source_key"],
                     IntakeBatch.branch_id == branch,
+                    IntakeItem.id.not_in(superseded_ids or set()),
                 )
             )
             if prior_item:
@@ -268,8 +283,21 @@ def register(app, DB, Actor):
         rows = db.scalars(
             select(IntakeItem).where(IntakeItem.batch_id == batch.id).order_by(IntakeItem.row_number)
         )
+        from app.models import IntakeSpreadsheetSource
+
+        original = db.get(IntakeSpreadsheetSource, batch.id)
+        from app.screening_intake.background import provenance as background_provenance
+
         return {
+            "provenance": {
+                **json.loads(decrypt(original.encrypted_metadata)),
+                "sha256": original.sha256,
+                "mapping_version": original.mapping_version,
+            }
+            if original
+            else background_provenance(db, batch.id),
             "id": batch.id,
+            "branch_id": batch.branch_id,
             "received_at": batch.received_at,
             "source_channel": batch.source_channel,
             "schema_version": batch.schema_version,
@@ -314,6 +342,14 @@ def register(app, DB, Actor):
         )
         if not item or item.status in {"validation_failed", "duplicate_detected"}:
             raise DomainError("SOURCE_MISMATCH", "Correct the source before selecting a driver file.", 409)
+        from app.screening_intake.lineage import require_current_source
+
+        matched = require_current_source(db, item, batch)
+        if matched:
+            from app.drivers.service import identity
+
+            identity(db, actor, tid, matched.driver_id, "drivers:write")
+            return {"driver_id": matched.driver_id, "source_item_id": item.id}
         payload = json.loads(decrypt(item.encrypted_payload))["normalized"]
         prior_link = (
             select(DriverRequirement.driver_id)
@@ -365,8 +401,22 @@ def row_output(db, row):
         .order_by(IntakeAttachment.attached_at.desc())
         .limit(1)
     )
+    from app.screening_intake.lineage import replacement, reviewed_match
+
+    child, matched = replacement(db, row.id), reviewed_match(db, row.id)
+    from app.models import User
+
     payload = json.loads(decrypt(row.encrypted_payload))
     payload["received_reason"] = payload["reason"]
+    if child:
+        payload["reason"] = (
+            "A corrected receipt replaces this row. The original remains available as history."
+        )
+    elif matched:
+        payload["reason"] = (
+            "Driver and engagement match reviewed. Supporting evidence still requires upload, scan and authorized review."
+        )
+
     if attachment:
         payload["reason"] = (
             "Evidence was reviewed and linked to a driver requirement. This is not a legal qualification decision."
@@ -375,7 +425,23 @@ def row_output(db, row):
         payload,
         id=row.id,
         received_status=row.status,
-        status="attached" if attachment else row.status,
+        status="attached"
+        if attachment
+        else "superseded"
+        if child
+        else "matched_for_review"
+        if matched
+        else row.status,
+        replacement={"batch_id": child.batch_id, "item_id": child.id} if child else None,
+        match={
+            "driver_id": matched.driver_id,
+            "engagement_id": matched.engagement_id,
+            "reviewer": db.get(User, matched.actor_id).email,
+            "reviewed_at": matched.created_at,
+            "basis": decrypt(matched.encrypted_basis),
+        }
+        if matched
+        else None,
         attachment={
             "evidence_id": attachment.evidence_id,
             "requirement_id": attachment.requirement_id,

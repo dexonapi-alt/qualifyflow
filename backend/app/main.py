@@ -32,6 +32,10 @@ from app.audit.service import record
 from app.drivers import service as drivers
 from app.drivers.routes import register as register_driver_routes
 from app.screening_intake.routes import register as register_intake_routes
+from app.screening_intake.review import register as register_intake_review_routes
+from app.screening_intake.templates import register as register_intake_template_routes
+from app.screening_intake.bulk import register as register_intake_bulk_routes
+from app.screening_intake.background import register as register_background_import_routes
 from app.exceptions.routes import register as register_exception_routes
 from app.approvals.routes import register as register_approval_routes
 from app.documents.routes import register as register_document_routes
@@ -464,3 +468,12 @@ register_integration_routes(app, DB, Actor)
 register_reporting_routes(app, DB, Actor)
 
 register_personal_routes(app, DB, Actor)
+
+register_intake_review_routes(app, DB, Actor)
+
+
+register_intake_template_routes(app, DB, Actor)
+
+register_intake_bulk_routes(app, DB, Actor)
+
+register_background_import_routes(app, DB, Actor)

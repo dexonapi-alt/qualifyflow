@@ -1,3 +1,5 @@
+> 2026-11-19 update: the original canonical CSV exercise below still works. Native XLSX and custom column names now use [guided spreadsheet intake](spreadsheet-intake.md), including explicit match review and linked corrections. Your hands-on training exercise remains pending; development verification does not count as your completion.
+
 # Compliance Data Specialist: practical training
 
 This guide follows the supplied job description and the actual implementation inspected on17 November2026. Training uses synthetic data only. It is an operational walkthrough, not a regulatory checklist, legal determination or production-readiness certification. No application permissions were changed to write this guide.

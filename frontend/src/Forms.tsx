@@ -210,6 +210,7 @@ export function State({ value }: { value: string }) {
   const working = [
     "in_review",
     "needs_review",
+    "matched_for_review",
     "processing",
     "scanning",
     "assigned",

@@ -1,0 +1,125 @@
+{
+  "scans": [
+    {
+      "name": "receipt-before",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "receipt-before",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "receipt-before",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "receipt-before",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "editor",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "editor",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "editor",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "editor",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mixed-preview",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mixed-preview",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mixed-preview",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mixed-preview",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "recorded-outcomes",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "recorded-outcomes",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "recorded-outcomes",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "recorded-outcomes",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "persisted-history",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "persisted-history",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "persisted-history",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "persisted-history",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

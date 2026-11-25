@@ -1,0 +1,101 @@
+{
+  "scans": [
+    {
+      "name": "saved-from-receipt",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "saved-from-receipt",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "saved-from-receipt",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "saved-from-receipt",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "reuse-mapping",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "reuse-mapping",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "reuse-mapping",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "reuse-mapping",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "layout-change-blocked",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "layout-change-blocked",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "layout-change-blocked",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "layout-change-blocked",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "retired-import-blocked",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "retired-import-blocked",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "retired-import-blocked",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "retired-import-blocked",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

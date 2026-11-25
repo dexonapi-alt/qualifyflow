@@ -1,0 +1,125 @@
+{
+  "scans": [
+    {
+      "name": "receipt-list",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "receipt-list",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "receipt-list",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "receipt-list",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "column-mapping",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "column-mapping",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "column-mapping",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "column-mapping",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mapped-preview",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mapped-preview",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mapped-preview",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mapped-preview",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "source-review",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "source-review",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "source-review",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "source-review",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "reviewed-match",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "reviewed-match",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "reviewed-match",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "reviewed-match",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    }
+  ],
+  "errors": []
+}

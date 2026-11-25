@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { api, type Branch, type DriverAccess } from "./api";
 import { State } from "./Forms";
+import { SpreadsheetImport } from "./SpreadsheetImport";
+import { SaveMapping } from "./MappingTemplates";
+import { BulkCorrections, CorrectionHistory } from "./BulkCorrections";
+import { BackgroundImports } from "./BackgroundImports";
+import { IntakeRowReview, type IntakeRow } from "./IntakeRowReview";
 
-type Row = {
-  id?: string;
-  row_number: number;
-  normalized: Record<string, string>;
-  status: string;
-  reason: string;
-  candidate: { reference: string; name: string } | null;
-};
+type Row = IntakeRow;
 type Batch = {
   id: string;
   received_at: string;
@@ -17,6 +15,20 @@ type Batch = {
   schema_version: string;
 };
 type Detail = Batch & {
+  branch_id: string | null;
+  provenance?: {
+    filename: string;
+    sheet: string;
+    mapping_version: string;
+    sha256: string;
+    mapping: Record<string, number>;
+    columns: string[];
+    template_revision_id?: string | null;
+    saved_template?: { name: string; revision: number } | null;
+    background_source_id?: string;
+    first_source_row?: number;
+    last_source_row?: number;
+  } | null;
   items: Row[];
   processing: {
     status: string;
@@ -41,6 +53,64 @@ export function IntakeWorkspace({
   onOpenDriver?: (driver: string, source: string) => void;
 }) {
   const base = "/tenants/" + companyId + "/intake-batches";
+  const [spreadsheet, setSpreadsheet] = useState(false),
+    [reviewing, setReviewing] = useState<Row | null>(null),
+    [notice, setNotice] = useState("");
+  const canReview = ["client_admin", "reviewer", "specialist"].includes(
+    access.role,
+  );
+  const [selection, setSelection] = useState<string[]>([]),
+    [bulkOpen, setBulkOpen] = useState(false);
+  const [background, setBackground] = useState(false);
+  const bulkReturn = useRef<HTMLButtonElement>(null);
+  function closeBulk() {
+    setBulkOpen(false);
+    requestAnimationFrame(() => {
+      const target = bulkReturn.current;
+      if (target && !target.disabled) target.focus({ preventScroll: true });
+      else
+        document
+          .querySelector<HTMLButtonElement>(
+            ".intake-workspace .intake-heading button:not(:disabled)",
+          )
+          ?.focus({ preventScroll: true });
+    });
+  }
+  function editable(row: Row) {
+    return (
+      !!row.id &&
+      !row.match &&
+      !row.replacement &&
+      !["attached", "duplicate_detected", "superseded"].includes(row.status)
+    );
+  }
+  async function openReceipt(id: string, message = "") {
+    const result = await api<Detail>(base + "/" + id);
+    setSelected(result);
+    setSelection([]);
+    setBulkOpen(false);
+    setCreating(false);
+    setSpreadsheet(false);
+    setReviewing(null);
+    setPreview(null);
+    setNotice(message);
+    setRevision((n) => n + 1);
+  }
+  useEffect(() => {
+    let active = true;
+    const batch = new URLSearchParams(location.hash.slice(1)).get("batch");
+    if (batch)
+      void api<Detail>(base + "/" + batch)
+        .then((r) => {
+          if (active) setSelected(r);
+        })
+        .catch((e) => {
+          if (active) setError(e.message);
+        });
+    return () => {
+      active = false;
+    };
+  }, [base]);
   const [page, setPage] = useState<{ total: number; items: Batch[] } | null>(
     null,
   );
@@ -80,6 +150,23 @@ export function IntakeWorkspace({
     }
   }
   const rows = selected?.items || preview;
+  if (background)
+    return (
+      <BackgroundImports
+        base={base}
+        branches={branches}
+        branchId={access.branch_id}
+        companyReference={companyReference}
+        onClose={() => {
+          setBackground(false);
+          setRevision((n) => n + 1);
+        }}
+        onOpenReceipt={(id) => {
+          setBackground(false);
+          void act(() => openReceipt(id));
+        }}
+      />
+    );
   return (
     <section className="intake-workspace" aria-busy={busy}>
       <div className="intake-heading">
@@ -89,7 +176,7 @@ export function IntakeWorkspace({
             Structured metadata receipts · synthetic schema v1
           </p>
         </div>
-        {!creating && !selected && access.can_write && (
+        {!creating && !spreadsheet && !selected && access.can_write && (
           <button
             onClick={() => {
               setCreating(true);
@@ -116,11 +203,53 @@ export function IntakeWorkspace({
           </button>
         )}
       </div>
+      {!creating && !spreadsheet && !selected && access.can_write && (
+        <button
+          className="secondary import-spreadsheet-button"
+          onClick={() => {
+            setSpreadsheet(true);
+            setError("");
+            setNotice("");
+          }}
+        >
+          Import spreadsheet
+        </button>
+      )}
+      {!creating && !spreadsheet && !selected && access.can_write && (
+        <button
+          type="button"
+          className="secondary import-spreadsheet-button"
+          onClick={() => setBackground(true)}
+        >
+          Background imports
+        </button>
+      )}
       <p className="intake-boundary">
         Receive metadata here, then open the matched driver file to assign and
         review supporting evidence. No receipt or attachment establishes legal
         qualification.
       </p>
+      {notice && (
+        <p className="action-confirmation" role="status">
+          {notice}
+        </p>
+      )}
+      {spreadsheet && (
+        <SpreadsheetImport
+          base={base}
+          branches={branches}
+          branchId={access.branch_id}
+          companyReference={companyReference}
+          canManageMappings={canReview}
+          onCancel={() => setSpreadsheet(false)}
+          onReceived={(id) =>
+            openReceipt(
+              id,
+              "Mapped receipt recorded. Review row outcomes before opening driver files.",
+            )
+          }
+        />
+      )}
       {error && (
         <div role="alert" className="notice error">
           {error}
@@ -216,6 +345,68 @@ export function IntakeWorkspace({
           </fieldset>
         </form>
       )}
+      {selected?.provenance && (
+        <details className="intake-provenance">
+          <summary>Original file & column mapping</summary>
+          <p>
+            {selected.provenance.filename} ? {selected.provenance.sheet} ?{" "}
+            {selected.provenance.mapping_version}
+          </p>
+          {selected.provenance.background_source_id && (
+            <p>
+              Background source data rows {selected.provenance.first_source_row}{" "}
+              to {selected.provenance.last_source_row}. Receipt row numbers
+              start at 1; the original file is retained privately.
+            </p>
+          )}
+          <dl>
+            {Object.entries(selected.provenance.mapping).map(
+              ([field, index]) => (
+                <div key={field}>
+                  <dt>{field.replaceAll("_", " ")}</dt>
+                  <dd>
+                    {index === -1
+                      ? "Selected company"
+                      : selected.provenance!.columns[index]}
+                  </dd>
+                </div>
+              ),
+            )}
+          </dl>
+          <small>
+            Original file SHA-256: <code>{selected.provenance.sha256}</code>
+          </small>
+          {selected.provenance.template_revision_id && (
+            <div className="mapping-provenance">
+              <p>
+                {selected.provenance.saved_template
+                  ? `Saved mapping: ${selected.provenance.saved_template.name} · v${selected.provenance.saved_template.revision}`
+                  : "Saved mapping revision"}
+              </p>
+              <details>
+                <summary>Revision reference</summary>
+                <code>{selected.provenance.template_revision_id}</code>
+              </details>
+            </div>
+          )}
+          {canReview && access.can_write && (
+            <SaveMapping
+              key={selected.id}
+              base={base}
+              batchId={selected.id}
+              branch={selected.branch_id || ""}
+            />
+          )}
+        </details>
+      )}
+      {selected && (
+        <a
+          className="quiet intake-error-export"
+          href={"/api/v1" + base + "/" + selected.id + "/errors.csv"}
+        >
+          <span>Download row errors</span>
+        </a>
+      )}
       {rows && (
         <>
           <div className="intake-heading">
@@ -278,15 +469,58 @@ export function IntakeWorkspace({
                 )}
             </div>
           )}
+          {selected && canReview && access.can_write && (
+            <div className="bulk-toolbar" aria-label="Source row selection">
+              <span role="status">
+                {selection.length} selected · up to 25 per correction run
+              </span>
+              <button
+                type="button"
+                className="quiet"
+                ref={bulkReturn}
+                disabled={busy || !selected.items.some(editable)}
+                onClick={() =>
+                  setSelection(
+                    selected.items
+                      .filter(editable)
+                      .slice(0, 25)
+                      .map((r) => r.id!),
+                  )
+                }
+              >
+                {selected.items.filter(editable).length > 25
+                  ? "Select first 25 editable rows"
+                  : `Select ${selected.items.filter(editable).length} editable rows`}
+              </button>
+              <button
+                type="button"
+                className="quiet"
+                disabled={!selection.length || busy}
+                onClick={() => setSelection([])}
+              >
+                Clear selection
+              </button>
+              <button
+                type="button"
+                disabled={!selection.length || busy}
+                onClick={() => setBulkOpen(true)}
+              >
+                Correct selected rows
+              </button>
+            </div>
+          )}
           <div
             className="table-scroll"
             role="region"
             aria-label="Intake row outcomes"
             tabIndex={0}
           >
-            <table className="management-table">
+            <table className="management-table intake-review-table">
               <thead>
                 <tr>
+                  {selected && canReview && access.can_write && (
+                    <th scope="col">Select</th>
+                  )}
                   <th scope="col">Row / source report</th>
                   <th scope="col">Driver reference</th>
                   <th scope="col">Report type</th>
@@ -298,6 +532,32 @@ export function IntakeWorkspace({
               <tbody>
                 {rows.map((row) => (
                   <tr key={row.row_number}>
+                    {selected && canReview && access.can_write && (
+                      <td>
+                        <label className="bulk-check-target">
+                          <input
+                            type="checkbox"
+                            className="bulk-row-check"
+                            aria-label={"Select source row " + row.row_number}
+                            checked={!!row.id && selection.includes(row.id)}
+                            disabled={
+                              !editable(row) ||
+                              (!selection.includes(row.id!) &&
+                                selection.length >= 25) ||
+                              busy
+                            }
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setSelection((v) =>
+                                checked
+                                  ? [...v, row.id!]
+                                  : v.filter((id) => id !== row.id),
+                              );
+                            }}
+                          />
+                        </label>
+                      </td>
+                    )}
                     <td>
                       {row.row_number} · {row.normalized.external_report_ref}
                     </td>
@@ -316,38 +576,80 @@ export function IntakeWorkspace({
                     <td>{row.reason}</td>
                     {selected && (
                       <td>
-                        {row.id &&
-                        !["validation_failed", "duplicate_detected"].includes(
-                          row.status,
-                        ) &&
-                        onOpenDriver ? (
+                        {row.replacement ? (
                           <button
                             className="secondary"
                             disabled={busy}
                             onClick={() =>
-                              void act(async () => {
-                                const match = await api<{
-                                  driver_id: string;
-                                  source_item_id: string;
-                                }>(
-                                  base +
-                                    "/" +
-                                    selected.id +
-                                    "/items/" +
-                                    row.id +
-                                    "/driver-candidate",
-                                );
-                                onOpenDriver(
-                                  match.driver_id,
-                                  match.source_item_id,
-                                );
-                              })
+                              void act(() =>
+                                openReceipt(
+                                  row.replacement!.batch_id,
+                                  "Opened corrected receipt.",
+                                ),
+                              )
                             }
                           >
-                            Open driver file
+                            Open corrected receipt
                           </button>
                         ) : (
-                          "Source correction required"
+                          <>
+                            {row.match && (
+                              <button
+                                className="secondary"
+                                disabled={busy}
+                                onClick={() => setReviewing(row)}
+                              >
+                                View match
+                              </button>
+                            )}
+                            {row.id &&
+                              !row.match &&
+                              row.status !== "attached" && (
+                                <button
+                                  className="secondary"
+                                  disabled={busy}
+                                  onClick={() => setReviewing(row)}
+                                >
+                                  Review source row
+                                </button>
+                              )}
+                            {row.id &&
+                              (row.match ||
+                                row.status === "attached" ||
+                                (!canReview &&
+                                  selected.source_channel === "csv_metadata" &&
+                                  ![
+                                    "validation_failed",
+                                    "duplicate_detected",
+                                  ].includes(row.status))) &&
+                              onOpenDriver && (
+                                <button
+                                  className="secondary"
+                                  disabled={busy}
+                                  onClick={() =>
+                                    void act(async () => {
+                                      const match = await api<{
+                                        driver_id: string;
+                                        source_item_id: string;
+                                      }>(
+                                        base +
+                                          "/" +
+                                          selected.id +
+                                          "/items/" +
+                                          row.id +
+                                          "/driver-candidate",
+                                      );
+                                      onOpenDriver(
+                                        match.driver_id,
+                                        match.source_item_id,
+                                      );
+                                    })
+                                  }
+                                >
+                                  Open driver file
+                                </button>
+                              )}
+                          </>
                         )}
                       </td>
                     )}
@@ -385,7 +687,7 @@ export function IntakeWorkspace({
           )}
         </>
       )}
-      {!creating && !selected && (
+      {!creating && !spreadsheet && !selected && (
         <>
           {!page ? (
             <p role="status">Loading receipts…</p>
@@ -462,6 +764,42 @@ export function IntakeWorkspace({
             </div>
           )}
         </>
+      )}
+      {selected && (
+        <CorrectionHistory
+          base={base}
+          batchId={selected.id}
+          revision={revision}
+          onOpen={(id) => void act(() => openReceipt(id))}
+        />
+      )}
+      {bulkOpen && selected && (
+        <BulkCorrections
+          key={selected.id}
+          base={base}
+          batchId={selected.id}
+          rows={selected.items.filter(
+            (row) => !!row.id && selection.includes(row.id),
+          )}
+          onClose={closeBulk}
+          onOpen={(id) => void act(() => openReceipt(id))}
+          onRecorded={async () => {
+            setSelected(await api<Detail>(base + "/" + selected.id));
+            setSelection([]);
+            setRevision((n) => n + 1);
+          }}
+        />
+      )}
+      {reviewing && selected && (
+        <IntakeRowReview
+          row={reviewing}
+          batchId={selected.id}
+          branchId={selected.branch_id}
+          base={base}
+          canReview={canReview}
+          onClose={() => setReviewing(null)}
+          onChanged={openReceipt}
+        />
       )}
     </section>
   );

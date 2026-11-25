@@ -35,6 +35,7 @@ from app.shared.security import encrypt, decrypt
 from app.audit.service import record
 from app.drivers.service import identity
 from app.documents import storage
+from app.screening_intake.lineage import require_current_source
 from app.driver_portal.requests import latest_request
 from app.exceptions.service import event as case_event
 
@@ -261,8 +262,9 @@ def file_data(db, actor, tid, did):
     }
 
 
-
-def receive_evidence(db, actor, tid, did, rid, data, scope, driver, req, correlation_id, submitted_via="staff"):
+def receive_evidence(
+    db, actor, tid, did, rid, data, scope, driver, req, correlation_id, submitted_via="staff"
+):
     try:
         content = base64.b64decode(data.content_base64, validate=True)
     except ValueError:
@@ -301,32 +303,26 @@ def receive_evidence(db, actor, tid, did, rid, data, scope, driver, req, correla
     )
     if prior:
         if prior.request_hash != request_hash:
-            raise DomainError(
-                "IDEMPOTENCY_CONFLICT", "Upload command was used with different evidence.", 409
-            )
+            raise DomainError("IDEMPOTENCY_CONFLICT", "Upload command was used with different evidence.", 409)
         return {"id": prior.id, "status": prior.status, "replayed": True}
     if data.source_item_id:
         source = db.scalar(
-            select(IntakeItem).where(
-                IntakeItem.id == str(data.source_item_id), IntakeItem.tenant_id == tid
-            )
+            select(IntakeItem).where(IntakeItem.id == str(data.source_item_id), IntakeItem.tenant_id == tid)
         )
         if not source or source.status in {"validation_failed", "duplicate_detected"}:
             raise DomainError("SOURCE_MISMATCH", "Source cannot support this evidence attachment.", 409)
         payload = json.loads(decrypt(source.encrypted_payload))["normalized"]
         batch = db.get(IntakeBatch, source.batch_id)
         target_engagement = db.get(DriverEngagement, req.engagement_id)
+        match = require_current_source(db, source, batch, driver.id, req.engagement_id)
         if (scope.branch_id and batch.branch_id != scope.branch_id) or (
             batch.branch_id and batch.branch_id != target_engagement.branch_id
         ):
-            raise DomainError(
-                "SOURCE_MISMATCH", "Source location and selected engagement do not agree.", 409
-            )
+            raise DomainError("SOURCE_MISMATCH", "Source location and selected engagement do not agree.", 409)
         definition = db.get(RequirementDefinition, req.definition_id)
-        if (
-            payload["external_driver_ref"] != driver.reference
-            or payload["report_type"] != definition.category
-        ):
+        if (not match and payload["external_driver_ref"] != driver.reference) or payload[
+            "report_type"
+        ] != definition.category:
             raise DomainError(
                 "SOURCE_MISMATCH",
                 "Verify the exact driver reference and requirement category before attachment.",
@@ -336,9 +332,7 @@ def receive_evidence(db, actor, tid, did, rid, data, scope, driver, req, correla
         db.scalar(
             select(func.count())
             .select_from(EvidenceVersion)
-            .where(
-                EvidenceVersion.tenant_id == tid, EvidenceVersion.status.in_(["quarantined", "scanning"])
-            )
+            .where(EvidenceVersion.tenant_id == tid, EvidenceVersion.status.in_(["quarantined", "scanning"]))
         )
         or 0
     ) >= 50:
@@ -348,9 +342,7 @@ def receive_evidence(db, actor, tid, did, rid, data, scope, driver, req, correla
             429,
         )
     if (
-        db.scalar(
-            select(func.count()).select_from(EvidenceVersion).where(EvidenceVersion.tenant_id == tid)
-        )
+        db.scalar(select(func.count()).select_from(EvidenceVersion).where(EvidenceVersion.tenant_id == tid))
         or 0
     ) >= 1000:
         raise DomainError(
@@ -535,6 +527,9 @@ def register(app, DB, Actor):
         if not source:
             raise DomainError("NOT_FOUND", "Source unavailable.", 404)
         batch = db.get(IntakeBatch, source.batch_id)
+        if scope.branch_id and batch.branch_id != scope.branch_id:
+            raise DomainError("NOT_FOUND", "Source unavailable.", 404)
+        match = require_current_source(db, source, batch, str(driver_id))
         payload = json.loads(decrypt(source.encrypted_payload))["normalized"]
         established = db.scalar(
             select(IntakeAttachment.id)
@@ -546,7 +541,7 @@ def register(app, DB, Actor):
             )
         )
         if (scope.branch_id and batch.branch_id != scope.branch_id) or (
-            payload["external_driver_ref"] != driver.reference and not established
+            payload["external_driver_ref"] != driver.reference and not established and not match
         ):
             raise DomainError("SOURCE_MISMATCH", "Source does not match this scoped driver reference.", 409)
         return {
@@ -616,7 +611,9 @@ def register(app, DB, Actor):
     ):
         tid, did, rid = str(tenant_id), str(driver_id), str(requirement_id)
         scope, driver, req = requirement(db, actor, tid, did, rid, True)
-        return receive_evidence(db, actor, tid, did, rid, data, scope, driver, req, request.state.correlation_id)
+        return receive_evidence(
+            db, actor, tid, did, rid, data, scope, driver, req, request.state.correlation_id
+        )
 
     @app.post(base + "/requirements/{requirement_id}/evidence/{evidence_id}/review")
     def review(

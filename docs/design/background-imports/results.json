@@ -1,0 +1,173 @@
+{
+  "scans": [
+    {
+      "name": "upload",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "upload",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "upload",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "upload",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mapping",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mapping",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mapping",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "mapping",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "validated-preview",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "validated-preview",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "validated-preview",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "validated-preview",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "completed",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "completed",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "completed",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "completed",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "recorded-part",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "recorded-part",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "recorded-part",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "recorded-part",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "canceled",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "canceled",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "canceled",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "canceled",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "error",
+      "width": 375,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "error",
+      "width": 768,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "error",
+      "width": 1024,
+      "violations": [],
+      "overflow": false
+    },
+    {
+      "name": "error",
+      "width": 1440,
+      "violations": [],
+      "overflow": false
+    }
+  ],
+  "errors": []
+}
